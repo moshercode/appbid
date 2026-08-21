@@ -295,6 +295,7 @@ export const stripeWebhook = onRequest(
         await placeBid(dc, {
           listingId: existing.id,
           amount: newTotal,
+          deltaAmount: paidAmount,
           bidderName: null,
           displayName: displayName || existing.displayName,
           url: existing.url,

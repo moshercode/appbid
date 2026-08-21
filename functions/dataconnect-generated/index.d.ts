@@ -13,6 +13,11 @@ export interface Bid_Key {
   __typename?: 'Bid_Key';
 }
 
+export interface Click_Key {
+  id: UUIDString;
+  __typename?: 'Click_Key';
+}
+
 export interface CreateListingData {
   newListing: Listing_Key;
   bid_insert: Bid_Key;
@@ -60,15 +65,6 @@ export interface GetListingByUrlVariables {
   url: string;
 }
 
-export interface GetTopListingData {
-  listings: ({
-    id: UUIDString;
-    displayName: string;
-    url: string;
-    currentBid: number;
-  } & Listing_Key)[];
-}
-
 export interface GetVisitorStatsData {
   visitStats: ({
     lastHour?: number | null;
@@ -78,33 +74,51 @@ export interface GetVisitorStatsData {
 
 export interface IncrementClickCountData {
   listing_update?: Listing_Key | null;
+  click_insert: Click_Key;
 }
 
 export interface IncrementClickCountVariables {
   listingId: UUIDString;
 }
 
-export interface ListLeaderboardData {
-  listings: ({
-    id: UUIDString;
-    displayName: string;
-    url: string;
+export interface ListAnnualLeaderboardData {
+  annualLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
     tagline?: string | null;
     iconUrl?: string | null;
-    currentBid: number;
-    clickCount: number;
-    updatedAt: TimestampString;
-  } & Listing_Key)[];
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
 }
 
-export interface ListLeaderboardVariables {
+export interface ListAnnualLeaderboardVariables {
+  limit?: number | null;
+}
+
+export interface ListMonthlyLeaderboardData {
+  monthlyLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
+    tagline?: string | null;
+    iconUrl?: string | null;
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
+}
+
+export interface ListMonthlyLeaderboardVariables {
   limit?: number | null;
 }
 
 export interface ListRecentBidsData {
   bids: ({
     id: UUIDString;
-    amount: number;
+    deltaAmount: number;
     bidderName?: string | null;
     displayName: string;
     url: string;
@@ -113,6 +127,23 @@ export interface ListRecentBidsData {
 }
 
 export interface ListRecentBidsVariables {
+  limit?: number | null;
+}
+
+export interface ListWeeklyLeaderboardData {
+  weeklyLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
+    tagline?: string | null;
+    iconUrl?: string | null;
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
+}
+
+export interface ListWeeklyLeaderboardVariables {
   limit?: number | null;
 }
 
@@ -133,6 +164,7 @@ export interface PlaceBidData {
 export interface PlaceBidVariables {
   listingId: UUIDString;
   amount: number;
+  deltaAmount?: number | null;
   bidderName?: string | null;
   displayName: string;
   url: string;
@@ -167,15 +199,20 @@ export function placeBid(dc: DataConnect, vars: PlaceBidVariables, options?: Ope
 /** Generated Node Admin SDK operation action function for the 'PlaceBid' Mutation. Allow users to pass in custom DataConnect instances. */
 export function placeBid(vars: PlaceBidVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<PlaceBidData>>;
 
-/** Generated Node Admin SDK operation action function for the 'ListLeaderboard' Query. Allow users to execute without passing in DataConnect. */
-export function listLeaderboard(dc: DataConnect, vars?: ListLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListLeaderboardData>>;
-/** Generated Node Admin SDK operation action function for the 'ListLeaderboard' Query. Allow users to pass in custom DataConnect instances. */
-export function listLeaderboard(vars?: ListLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListLeaderboardData>>;
+/** Generated Node Admin SDK operation action function for the 'ListWeeklyLeaderboard' Query. Allow users to execute without passing in DataConnect. */
+export function listWeeklyLeaderboard(dc: DataConnect, vars?: ListWeeklyLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListWeeklyLeaderboardData>>;
+/** Generated Node Admin SDK operation action function for the 'ListWeeklyLeaderboard' Query. Allow users to pass in custom DataConnect instances. */
+export function listWeeklyLeaderboard(vars?: ListWeeklyLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListWeeklyLeaderboardData>>;
 
-/** Generated Node Admin SDK operation action function for the 'GetTopListing' Query. Allow users to execute without passing in DataConnect. */
-export function getTopListing(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTopListingData>>;
-/** Generated Node Admin SDK operation action function for the 'GetTopListing' Query. Allow users to pass in custom DataConnect instances. */
-export function getTopListing(options?: OperationOptions): Promise<ExecuteOperationResponse<GetTopListingData>>;
+/** Generated Node Admin SDK operation action function for the 'ListMonthlyLeaderboard' Query. Allow users to execute without passing in DataConnect. */
+export function listMonthlyLeaderboard(dc: DataConnect, vars?: ListMonthlyLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMonthlyLeaderboardData>>;
+/** Generated Node Admin SDK operation action function for the 'ListMonthlyLeaderboard' Query. Allow users to pass in custom DataConnect instances. */
+export function listMonthlyLeaderboard(vars?: ListMonthlyLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMonthlyLeaderboardData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListAnnualLeaderboard' Query. Allow users to execute without passing in DataConnect. */
+export function listAnnualLeaderboard(dc: DataConnect, vars?: ListAnnualLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListAnnualLeaderboardData>>;
+/** Generated Node Admin SDK operation action function for the 'ListAnnualLeaderboard' Query. Allow users to pass in custom DataConnect instances. */
+export function listAnnualLeaderboard(vars?: ListAnnualLeaderboardVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListAnnualLeaderboardData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListRecentBids' Query. Allow users to execute without passing in DataConnect. */
 export function listRecentBids(dc: DataConnect, vars?: ListRecentBidsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListRecentBidsData>>;

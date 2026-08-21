@@ -10,6 +10,7 @@ mutation LogVisit
 mutation IncrementClickCount($listingId: UUID!)
   @auth(level: PUBLIC, insecureReason: "Public click counter, no auth needed") {
   listing_update(id: $listingId, data: { clickCount_update: { inc: 1 } })
+  click_insert(data: { listingId: $listingId })
 }
 
 mutation CreateListing(
@@ -35,6 +36,7 @@ mutation CreateListing(
     data: {
       listingId_expr: "response.newListing.id"
       amount: $initialBid
+      deltaAmount: $initialBid
       displayName: $displayName
       url: $url
       stripeSessionId: $stripeSessionId
@@ -45,6 +47,7 @@ mutation CreateListing(
 mutation PlaceBid(
   $listingId: UUID!
   $amount: Float!
+  $deltaAmount: Float = 0
   $bidderName: String
   $displayName: String!
   $url: String!
@@ -57,6 +60,7 @@ mutation PlaceBid(
     data: {
       listingId: $listingId
       amount: $amount
+      deltaAmount: $deltaAmount
       bidderName: $bidderName
       displayName: $displayName
       url: $url

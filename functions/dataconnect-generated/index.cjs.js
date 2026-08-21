@@ -35,19 +35,26 @@ function placeBid(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.placeBid = placeBid;
 
-function listLeaderboard(dcOrVarsOrOptions, varsOrOptions, options) {
+function listWeeklyLeaderboard(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListLeaderboard', inputVars, inputOpts);
+  return dcInstance.executeQuery('ListWeeklyLeaderboard', inputVars, inputOpts);
 }
-exports.listLeaderboard = listLeaderboard;
+exports.listWeeklyLeaderboard = listWeeklyLeaderboard;
 
-function getTopListing(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+function listMonthlyLeaderboard(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('GetTopListing', undefined, inputOpts);
+  return dcInstance.executeQuery('ListMonthlyLeaderboard', inputVars, inputOpts);
 }
-exports.getTopListing = getTopListing;
+exports.listMonthlyLeaderboard = listMonthlyLeaderboard;
+
+function listAnnualLeaderboard(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListAnnualLeaderboard', inputVars, inputOpts);
+}
+exports.listAnnualLeaderboard = listAnnualLeaderboard;
 
 function listRecentBids(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);

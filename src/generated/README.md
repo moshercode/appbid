@@ -8,8 +8,9 @@ This README will guide you through the process of using the generated JavaScript
 - [**Accessing the connector**](#accessing-the-connector)
   - [*Connecting to the local Emulator*](#connecting-to-the-local-emulator)
 - [**Queries**](#queries)
-  - [*ListLeaderboard*](#listleaderboard)
-  - [*GetTopListing*](#gettoplisting)
+  - [*ListWeeklyLeaderboard*](#listweeklyleaderboard)
+  - [*ListMonthlyLeaderboard*](#listmonthlyleaderboard)
+  - [*ListAnnualLeaderboard*](#listannualleaderboard)
   - [*ListRecentBids*](#listrecentbids)
   - [*GetListingById*](#getlistingbyid)
   - [*GetListingByUrl*](#getlistingbyurl)
@@ -65,221 +66,369 @@ The following is true for both the action shortcut function and the `QueryRef` f
 
 Below are examples of how to use the `appbid` connector's generated functions to execute each query. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-queries).
 
-## ListLeaderboard
-You can execute the `ListLeaderboard` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
+## ListWeeklyLeaderboard
+You can execute the `ListWeeklyLeaderboard` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
 ```typescript
-listLeaderboard(vars?: ListLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListLeaderboardData, ListLeaderboardVariables>;
+listWeeklyLeaderboard(vars?: ListWeeklyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
 
-interface ListLeaderboardRef {
+interface ListWeeklyLeaderboardRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (vars?: ListLeaderboardVariables): QueryRef<ListLeaderboardData, ListLeaderboardVariables>;
+  (vars?: ListWeeklyLeaderboardVariables): QueryRef<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
 }
-export const listLeaderboardRef: ListLeaderboardRef;
+export const listWeeklyLeaderboardRef: ListWeeklyLeaderboardRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listLeaderboard(dc: DataConnect, vars?: ListLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListLeaderboardData, ListLeaderboardVariables>;
+listWeeklyLeaderboard(dc: DataConnect, vars?: ListWeeklyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
 
-interface ListLeaderboardRef {
+interface ListWeeklyLeaderboardRef {
   ...
-  (dc: DataConnect, vars?: ListLeaderboardVariables): QueryRef<ListLeaderboardData, ListLeaderboardVariables>;
+  (dc: DataConnect, vars?: ListWeeklyLeaderboardVariables): QueryRef<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
 }
-export const listLeaderboardRef: ListLeaderboardRef;
+export const listWeeklyLeaderboardRef: ListWeeklyLeaderboardRef;
 ```
 
-If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listLeaderboardRef:
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listWeeklyLeaderboardRef:
 ```typescript
-const name = listLeaderboardRef.operationName;
+const name = listWeeklyLeaderboardRef.operationName;
 console.log(name);
 ```
 
 ### Variables
-The `ListLeaderboard` query has an optional argument of type `ListLeaderboardVariables`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+The `ListWeeklyLeaderboard` query has an optional argument of type `ListWeeklyLeaderboardVariables`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
-export interface ListLeaderboardVariables {
+export interface ListWeeklyLeaderboardVariables {
   limit?: number | null;
 }
 ```
 ### Return Type
-Recall that executing the `ListLeaderboard` query returns a `QueryPromise` that resolves to an object with a `data` property.
+Recall that executing the `ListWeeklyLeaderboard` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `ListLeaderboardData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `ListWeeklyLeaderboardData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
-export interface ListLeaderboardData {
-  listings: ({
-    id: UUIDString;
-    displayName: string;
-    url: string;
+export interface ListWeeklyLeaderboardData {
+  weeklyLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
     tagline?: string | null;
     iconUrl?: string | null;
-    currentBid: number;
-    clickCount: number;
-    updatedAt: TimestampString;
-  } & Listing_Key)[];
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
 }
 ```
-### Using `ListLeaderboard`'s action shortcut function
+### Using `ListWeeklyLeaderboard`'s action shortcut function
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, listLeaderboard, ListLeaderboardVariables } from '@appbid/dataconnect';
+import { connectorConfig, listWeeklyLeaderboard, ListWeeklyLeaderboardVariables } from '@appbid/dataconnect';
 
-// The `ListLeaderboard` query has an optional argument of type `ListLeaderboardVariables`:
-const listLeaderboardVars: ListLeaderboardVariables = {
+// The `ListWeeklyLeaderboard` query has an optional argument of type `ListWeeklyLeaderboardVariables`:
+const listWeeklyLeaderboardVars: ListWeeklyLeaderboardVariables = {
   limit: ..., // optional
 };
 
-// Call the `listLeaderboard()` function to execute the query.
+// Call the `listWeeklyLeaderboard()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await listLeaderboard(listLeaderboardVars);
+const { data } = await listWeeklyLeaderboard(listWeeklyLeaderboardVars);
 // Variables can be defined inline as well.
-const { data } = await listLeaderboard({ limit: ..., });
-// Since all variables are optional for this query, you can omit the `ListLeaderboardVariables` argument.
-const { data } = await listLeaderboard();
+const { data } = await listWeeklyLeaderboard({ limit: ..., });
+// Since all variables are optional for this query, you can omit the `ListWeeklyLeaderboardVariables` argument.
+const { data } = await listWeeklyLeaderboard();
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await listLeaderboard(dataConnect, listLeaderboardVars);
+const { data } = await listWeeklyLeaderboard(dataConnect, listWeeklyLeaderboardVars);
 
-console.log(data.listings);
+console.log(data.weeklyLeaderboardEntries);
 
 // Or, you can use the `Promise` API.
-listLeaderboard(listLeaderboardVars).then((response) => {
+listWeeklyLeaderboard(listWeeklyLeaderboardVars).then((response) => {
   const data = response.data;
-  console.log(data.listings);
+  console.log(data.weeklyLeaderboardEntries);
 });
 ```
 
-### Using `ListLeaderboard`'s `QueryRef` function
+### Using `ListWeeklyLeaderboard`'s `QueryRef` function
 
 ```typescript
 import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, listLeaderboardRef, ListLeaderboardVariables } from '@appbid/dataconnect';
+import { connectorConfig, listWeeklyLeaderboardRef, ListWeeklyLeaderboardVariables } from '@appbid/dataconnect';
 
-// The `ListLeaderboard` query has an optional argument of type `ListLeaderboardVariables`:
-const listLeaderboardVars: ListLeaderboardVariables = {
+// The `ListWeeklyLeaderboard` query has an optional argument of type `ListWeeklyLeaderboardVariables`:
+const listWeeklyLeaderboardVars: ListWeeklyLeaderboardVariables = {
   limit: ..., // optional
 };
 
-// Call the `listLeaderboardRef()` function to get a reference to the query.
-const ref = listLeaderboardRef(listLeaderboardVars);
+// Call the `listWeeklyLeaderboardRef()` function to get a reference to the query.
+const ref = listWeeklyLeaderboardRef(listWeeklyLeaderboardVars);
 // Variables can be defined inline as well.
-const ref = listLeaderboardRef({ limit: ..., });
-// Since all variables are optional for this query, you can omit the `ListLeaderboardVariables` argument.
-const ref = listLeaderboardRef();
+const ref = listWeeklyLeaderboardRef({ limit: ..., });
+// Since all variables are optional for this query, you can omit the `ListWeeklyLeaderboardVariables` argument.
+const ref = listWeeklyLeaderboardRef();
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = listLeaderboardRef(dataConnect, listLeaderboardVars);
+const ref = listWeeklyLeaderboardRef(dataConnect, listWeeklyLeaderboardVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeQuery(ref);
 
-console.log(data.listings);
+console.log(data.weeklyLeaderboardEntries);
 
 // Or, you can use the `Promise` API.
 executeQuery(ref).then((response) => {
   const data = response.data;
-  console.log(data.listings);
+  console.log(data.weeklyLeaderboardEntries);
 });
 ```
 
-## GetTopListing
-You can execute the `GetTopListing` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
+## ListMonthlyLeaderboard
+You can execute the `ListMonthlyLeaderboard` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
 ```typescript
-getTopListing(options?: ExecuteQueryOptions): QueryPromise<GetTopListingData, undefined>;
+listMonthlyLeaderboard(vars?: ListMonthlyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
 
-interface GetTopListingRef {
+interface ListMonthlyLeaderboardRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<GetTopListingData, undefined>;
+  (vars?: ListMonthlyLeaderboardVariables): QueryRef<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
 }
-export const getTopListingRef: GetTopListingRef;
+export const listMonthlyLeaderboardRef: ListMonthlyLeaderboardRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getTopListing(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetTopListingData, undefined>;
+listMonthlyLeaderboard(dc: DataConnect, vars?: ListMonthlyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
 
-interface GetTopListingRef {
+interface ListMonthlyLeaderboardRef {
   ...
-  (dc: DataConnect): QueryRef<GetTopListingData, undefined>;
+  (dc: DataConnect, vars?: ListMonthlyLeaderboardVariables): QueryRef<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
 }
-export const getTopListingRef: GetTopListingRef;
+export const listMonthlyLeaderboardRef: ListMonthlyLeaderboardRef;
 ```
 
-If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getTopListingRef:
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listMonthlyLeaderboardRef:
 ```typescript
-const name = getTopListingRef.operationName;
+const name = listMonthlyLeaderboardRef.operationName;
 console.log(name);
 ```
 
 ### Variables
-The `GetTopListing` query has no variables.
-### Return Type
-Recall that executing the `GetTopListing` query returns a `QueryPromise` that resolves to an object with a `data` property.
+The `ListMonthlyLeaderboard` query has an optional argument of type `ListMonthlyLeaderboardVariables`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
 
-The `data` property is an object of type `GetTopListingData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
-export interface GetTopListingData {
-  listings: ({
-    id: UUIDString;
-    displayName: string;
-    url: string;
-    currentBid: number;
-  } & Listing_Key)[];
+export interface ListMonthlyLeaderboardVariables {
+  limit?: number | null;
 }
 ```
-### Using `GetTopListing`'s action shortcut function
+### Return Type
+Recall that executing the `ListMonthlyLeaderboard` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListMonthlyLeaderboardData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListMonthlyLeaderboardData {
+  monthlyLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
+    tagline?: string | null;
+    iconUrl?: string | null;
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
+}
+```
+### Using `ListMonthlyLeaderboard`'s action shortcut function
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, getTopListing } from '@appbid/dataconnect';
+import { connectorConfig, listMonthlyLeaderboard, ListMonthlyLeaderboardVariables } from '@appbid/dataconnect';
 
+// The `ListMonthlyLeaderboard` query has an optional argument of type `ListMonthlyLeaderboardVariables`:
+const listMonthlyLeaderboardVars: ListMonthlyLeaderboardVariables = {
+  limit: ..., // optional
+};
 
-// Call the `getTopListing()` function to execute the query.
+// Call the `listMonthlyLeaderboard()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await getTopListing();
+const { data } = await listMonthlyLeaderboard(listMonthlyLeaderboardVars);
+// Variables can be defined inline as well.
+const { data } = await listMonthlyLeaderboard({ limit: ..., });
+// Since all variables are optional for this query, you can omit the `ListMonthlyLeaderboardVariables` argument.
+const { data } = await listMonthlyLeaderboard();
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await getTopListing(dataConnect);
+const { data } = await listMonthlyLeaderboard(dataConnect, listMonthlyLeaderboardVars);
 
-console.log(data.listings);
+console.log(data.monthlyLeaderboardEntries);
 
 // Or, you can use the `Promise` API.
-getTopListing().then((response) => {
+listMonthlyLeaderboard(listMonthlyLeaderboardVars).then((response) => {
   const data = response.data;
-  console.log(data.listings);
+  console.log(data.monthlyLeaderboardEntries);
 });
 ```
 
-### Using `GetTopListing`'s `QueryRef` function
+### Using `ListMonthlyLeaderboard`'s `QueryRef` function
 
 ```typescript
 import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, getTopListingRef } from '@appbid/dataconnect';
+import { connectorConfig, listMonthlyLeaderboardRef, ListMonthlyLeaderboardVariables } from '@appbid/dataconnect';
 
+// The `ListMonthlyLeaderboard` query has an optional argument of type `ListMonthlyLeaderboardVariables`:
+const listMonthlyLeaderboardVars: ListMonthlyLeaderboardVariables = {
+  limit: ..., // optional
+};
 
-// Call the `getTopListingRef()` function to get a reference to the query.
-const ref = getTopListingRef();
+// Call the `listMonthlyLeaderboardRef()` function to get a reference to the query.
+const ref = listMonthlyLeaderboardRef(listMonthlyLeaderboardVars);
+// Variables can be defined inline as well.
+const ref = listMonthlyLeaderboardRef({ limit: ..., });
+// Since all variables are optional for this query, you can omit the `ListMonthlyLeaderboardVariables` argument.
+const ref = listMonthlyLeaderboardRef();
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = getTopListingRef(dataConnect);
+const ref = listMonthlyLeaderboardRef(dataConnect, listMonthlyLeaderboardVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeQuery(ref);
 
-console.log(data.listings);
+console.log(data.monthlyLeaderboardEntries);
 
 // Or, you can use the `Promise` API.
 executeQuery(ref).then((response) => {
   const data = response.data;
-  console.log(data.listings);
+  console.log(data.monthlyLeaderboardEntries);
+});
+```
+
+## ListAnnualLeaderboard
+You can execute the `ListAnnualLeaderboard` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
+```typescript
+listAnnualLeaderboard(vars?: ListAnnualLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
+
+interface ListAnnualLeaderboardRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars?: ListAnnualLeaderboardVariables): QueryRef<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
+}
+export const listAnnualLeaderboardRef: ListAnnualLeaderboardRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listAnnualLeaderboard(dc: DataConnect, vars?: ListAnnualLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
+
+interface ListAnnualLeaderboardRef {
+  ...
+  (dc: DataConnect, vars?: ListAnnualLeaderboardVariables): QueryRef<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
+}
+export const listAnnualLeaderboardRef: ListAnnualLeaderboardRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listAnnualLeaderboardRef:
+```typescript
+const name = listAnnualLeaderboardRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListAnnualLeaderboard` query has an optional argument of type `ListAnnualLeaderboardVariables`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListAnnualLeaderboardVariables {
+  limit?: number | null;
+}
+```
+### Return Type
+Recall that executing the `ListAnnualLeaderboard` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListAnnualLeaderboardData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListAnnualLeaderboardData {
+  annualLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
+    tagline?: string | null;
+    iconUrl?: string | null;
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
+}
+```
+### Using `ListAnnualLeaderboard`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listAnnualLeaderboard, ListAnnualLeaderboardVariables } from '@appbid/dataconnect';
+
+// The `ListAnnualLeaderboard` query has an optional argument of type `ListAnnualLeaderboardVariables`:
+const listAnnualLeaderboardVars: ListAnnualLeaderboardVariables = {
+  limit: ..., // optional
+};
+
+// Call the `listAnnualLeaderboard()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listAnnualLeaderboard(listAnnualLeaderboardVars);
+// Variables can be defined inline as well.
+const { data } = await listAnnualLeaderboard({ limit: ..., });
+// Since all variables are optional for this query, you can omit the `ListAnnualLeaderboardVariables` argument.
+const { data } = await listAnnualLeaderboard();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listAnnualLeaderboard(dataConnect, listAnnualLeaderboardVars);
+
+console.log(data.annualLeaderboardEntries);
+
+// Or, you can use the `Promise` API.
+listAnnualLeaderboard(listAnnualLeaderboardVars).then((response) => {
+  const data = response.data;
+  console.log(data.annualLeaderboardEntries);
+});
+```
+
+### Using `ListAnnualLeaderboard`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listAnnualLeaderboardRef, ListAnnualLeaderboardVariables } from '@appbid/dataconnect';
+
+// The `ListAnnualLeaderboard` query has an optional argument of type `ListAnnualLeaderboardVariables`:
+const listAnnualLeaderboardVars: ListAnnualLeaderboardVariables = {
+  limit: ..., // optional
+};
+
+// Call the `listAnnualLeaderboardRef()` function to get a reference to the query.
+const ref = listAnnualLeaderboardRef(listAnnualLeaderboardVars);
+// Variables can be defined inline as well.
+const ref = listAnnualLeaderboardRef({ limit: ..., });
+// Since all variables are optional for this query, you can omit the `ListAnnualLeaderboardVariables` argument.
+const ref = listAnnualLeaderboardRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listAnnualLeaderboardRef(dataConnect, listAnnualLeaderboardVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.annualLeaderboardEntries);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.annualLeaderboardEntries);
 });
 ```
 
@@ -328,7 +477,7 @@ The `data` property is an object of type `ListRecentBidsData`, which is defined 
 export interface ListRecentBidsData {
   bids: ({
     id: UUIDString;
-    amount: number;
+    deltaAmount: number;
     bidderName?: string | null;
     displayName: string;
     url: string;
@@ -881,6 +1030,7 @@ The `data` property is an object of type `IncrementClickCountData`, which is def
 ```typescript
 export interface IncrementClickCountData {
   listing_update?: Listing_Key | null;
+  click_insert: Click_Key;
 }
 ```
 ### Using `IncrementClickCount`'s action shortcut function
@@ -905,11 +1055,13 @@ const dataConnect = getDataConnect(connectorConfig);
 const { data } = await incrementClickCount(dataConnect, incrementClickCountVars);
 
 console.log(data.listing_update);
+console.log(data.click_insert);
 
 // Or, you can use the `Promise` API.
 incrementClickCount(incrementClickCountVars).then((response) => {
   const data = response.data;
   console.log(data.listing_update);
+  console.log(data.click_insert);
 });
 ```
 
@@ -938,11 +1090,13 @@ const ref = incrementClickCountRef(dataConnect, incrementClickCountVars);
 const { data } = await executeMutation(ref);
 
 console.log(data.listing_update);
+console.log(data.click_insert);
 
 // Or, you can use the `Promise` API.
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.listing_update);
+  console.log(data.click_insert);
 });
 ```
 
@@ -1114,6 +1268,7 @@ The `PlaceBid` mutation requires an argument of type `PlaceBidVariables`, which 
 export interface PlaceBidVariables {
   listingId: UUIDString;
   amount: number;
+  deltaAmount?: number | null;
   bidderName?: string | null;
   displayName: string;
   url: string;
@@ -1143,6 +1298,7 @@ import { connectorConfig, placeBid, PlaceBidVariables } from '@appbid/dataconnec
 const placeBidVars: PlaceBidVariables = {
   listingId: ..., 
   amount: ..., 
+  deltaAmount: ..., // optional
   bidderName: ..., // optional
   displayName: ..., 
   url: ..., 
@@ -1156,7 +1312,7 @@ const placeBidVars: PlaceBidVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await placeBid(placeBidVars);
 // Variables can be defined inline as well.
-const { data } = await placeBid({ listingId: ..., amount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., stripeSessionId: ..., });
+const { data } = await placeBid({ listingId: ..., amount: ..., deltaAmount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., stripeSessionId: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1183,6 +1339,7 @@ import { connectorConfig, placeBidRef, PlaceBidVariables } from '@appbid/datacon
 const placeBidVars: PlaceBidVariables = {
   listingId: ..., 
   amount: ..., 
+  deltaAmount: ..., // optional
   bidderName: ..., // optional
   displayName: ..., 
   url: ..., 
@@ -1195,7 +1352,7 @@ const placeBidVars: PlaceBidVariables = {
 // Call the `placeBidRef()` function to get a reference to the mutation.
 const ref = placeBidRef(placeBidVars);
 // Variables can be defined inline as well.
-const ref = placeBidRef({ listingId: ..., amount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., stripeSessionId: ..., });
+const ref = placeBidRef({ listingId: ..., amount: ..., deltaAmount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., stripeSessionId: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

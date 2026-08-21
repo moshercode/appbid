@@ -1,6 +1,8 @@
 import { dataConnect } from './firebase.js';
 import {
-  listLeaderboard,
+  listWeeklyLeaderboard,
+  listMonthlyLeaderboard,
+  listAnnualLeaderboard,
   listRecentBids,
   logVisit,
   getVisitorStats,
@@ -13,7 +15,22 @@ const STATS_INTERVAL_MS = 60000;
 const SERVER_ONLY = { fetchPolicy: 'SERVER_ONLY' };
 const CHECKOUT_ENDPOINT = '/api/create-checkout-session';
 
+// Weekly is the only bindable window (drives the hero mechanic below);
+// monthly/annual are read-only views over the same bid data, refreshed less
+// often since they don't need to feel as "live" as the active competition.
+const WINDOW_QUERY = {
+  week: listWeeklyLeaderboard,
+  month: listMonthlyLeaderboard,
+  year: listAnnualLeaderboard,
+};
+const WINDOW_FIELD = {
+  week: 'weeklyLeaderboardEntries',
+  month: 'monthlyLeaderboardEntries',
+  year: 'annualLeaderboardEntries',
+};
+
 const leaderboardEl = document.getElementById('leaderboard-body');
+const leaderboardTabsEl = document.getElementById('leaderboard-tabs');
 const activityEl = document.getElementById('activity-feed');
 const themeToggleBtn = document.getElementById('theme-toggle');
 const visitors1hEl = document.getElementById('visitors-1h');
@@ -32,7 +49,8 @@ const claimRankEl = document.getElementById('claim-rank');
 
 let suggestedBid = MIN_BID;
 let userAdjustedBid = false;
-let currentListings = [];
+let activeWindow = 'week';
+const aggregatesByWindow = { week: [], month: [], year: [] };
 
 function applyThemeIcon() {
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -87,7 +105,9 @@ function timeAgo(isoString) {
 }
 
 function computeRankForAmount(amount) {
-  const higherCount = currentListings.filter((l) => l.currentBid > amount).length;
+  // Always ranks against the weekly board, regardless of which tab is visible —
+  // that's the board you're actually bidding into.
+  const higherCount = aggregatesByWindow.week.filter((l) => l.periodTotal > amount).length;
   return higherCount + 1;
 }
 
@@ -122,12 +142,15 @@ bidInput.addEventListener('blur', () => {
   setBidAmount(getBidAmount());
 });
 
-function renderLeaderboard(listings) {
-  currentListings = listings;
+const WINDOW_EMPTY_MESSAGE = {
+  week: 'No bids yet this week — be the first to claim #1.',
+  month: 'No bids yet this month.',
+  year: 'No bids yet this year.',
+};
 
+function renderLeaderboard(listings, windowKey) {
   if (!listings.length) {
-    leaderboardEl.innerHTML = `<div class="empty-state">No listings yet — be the first to claim #1.</div>`;
-    updateSuggestedBid(0);
+    leaderboardEl.innerHTML = `<div class="empty-state">${WINDOW_EMPTY_MESSAGE[windowKey] || WINDOW_EMPTY_MESSAGE.week}</div>`;
     return;
   }
 
@@ -139,28 +162,27 @@ function renderLeaderboard(listings) {
         : `#${rank}`;
       const badgeClass = l.iconUrl ? 'rank-badge has-icon' : 'rank-badge';
       return `
-        <a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer nofollow" class="rank-card rank-${rank}" data-listing-id="${l.id}">
+        <a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer nofollow" class="rank-card rank-${rank}" data-listing-id="${l.listingId}">
           <div class="${badgeClass}">${badgeContent}</div>
           <div class="rank-info">
             <span class="rank-name">${escapeHtml(l.displayName)}</span>
             ${l.tagline ? `<div class="rank-tagline">${escapeHtml(l.tagline)}</div>` : ''}
-            <div class="rank-meta">${timeAgo(l.updatedAt)}</div>
+            <div class="rank-meta">${l.lastBidAt ? timeAgo(l.lastBidAt) : ''}</div>
           </div>
           <div class="rank-stats">
-            <div class="rank-price">${formatMoney(l.currentBid)}</div>
-            <div class="rank-clicks">${(l.clickCount ?? 0).toLocaleString('en-US')} clicks</div>
+            <div class="rank-price">${formatMoney(l.periodTotal)}</div>
+            <div class="rank-clicks">${(l.periodClicks ?? 0).toLocaleString('en-US')} clicks</div>
           </div>
         </a>
       `;
     })
     .join('');
-
-  updateSuggestedBid(listings[0]?.currentBid ?? 0);
 }
 
-// The "Claim #1 for $X" headline suggests what it'd take to top the board,
-// but that's only a starting suggestion — any bid from $1 up is valid and
-// simply lands wherever that amount ranks (outbid.lol's actual mechanic).
+// The "Claim #1 for $X" headline suggests what it'd take to top the WEEKLY
+// board (the board resets every Monday), but that's only a starting
+// suggestion — any bid from $1 up is valid and simply lands wherever that
+// amount ranks this week.
 function updateSuggestedBid(topBid) {
   suggestedBid = topBid > 0 ? Math.floor(topBid) + 1 : MIN_BID;
   if (!userAdjustedBid) {
@@ -169,6 +191,22 @@ function updateSuggestedBid(topBid) {
     updateClaimRank(); // the amount didn't change, but the field of competitors just did
   }
 }
+
+function setActiveWindow(key) {
+  activeWindow = key;
+  leaderboardTabsEl.querySelectorAll('.board-tab').forEach((btn) => {
+    const isActive = btn.dataset.window === key;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', String(isActive));
+  });
+  renderLeaderboard(aggregatesByWindow[key], key); // already cached — instant, no fetch
+}
+
+leaderboardTabsEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('.board-tab');
+  if (!btn || btn.dataset.window === activeWindow) return;
+  setActiveWindow(btn.dataset.window);
+});
 
 // Event delegation: rows are replaced wholesale on every refresh, so a single
 // listener on the (stable) container beats re-attaching one per row.
@@ -191,7 +229,7 @@ function renderActivity(bids) {
         <li>
           <span class="activity-time">${timeAgo(b.createdAt)}</span>
           <a href="${escapeHtml(b.url)}" target="_blank" rel="noopener noreferrer nofollow">${escapeHtml(b.displayName)}</a>
-          claimed for <span class="activity-amount">${formatMoney(b.amount)}</span>
+          claimed for <span class="activity-amount">${formatMoney(b.deltaAmount)}</span>
         </li>
       `
     )
@@ -241,9 +279,17 @@ outbidForm.addEventListener('submit', async (e) => {
   }
 });
 
-async function refreshLeaderboard() {
-  const { data } = await listLeaderboard(dataConnect, { limit: 50 }, SERVER_ONLY);
-  renderLeaderboard(data.listings);
+async function refreshLeaderboardWindow(key) {
+  const { data } = await WINDOW_QUERY[key](dataConnect, { limit: 50 }, SERVER_ONLY);
+  const entries = data[WINDOW_FIELD[key]];
+  aggregatesByWindow[key] = entries;
+
+  if (key === 'week') {
+    updateSuggestedBid(entries[0]?.periodTotal ?? 0);
+  }
+  if (key === activeWindow) {
+    renderLeaderboard(entries, key);
+  }
 }
 
 async function refreshActivity() {
@@ -252,7 +298,11 @@ async function refreshActivity() {
 }
 
 async function refreshAll() {
-  await Promise.all([refreshLeaderboard(), refreshActivity()]);
+  await Promise.all([refreshLeaderboardWindow('week'), refreshActivity()]);
+}
+
+async function refreshSlowWindows() {
+  await Promise.all([refreshLeaderboardWindow('month'), refreshLeaderboardWindow('year')]);
 }
 
 async function refreshVisitorStats() {
@@ -281,6 +331,7 @@ refreshAll().catch((err) => {
   console.error(err);
   leaderboardEl.innerHTML = `<div class="empty-state">Couldn't load the leaderboard. Refresh to try again.</div>`;
 });
+refreshSlowWindows().catch((err) => console.error(err));
 
 logVisit(dataConnect).catch((err) => console.error(err));
 refreshVisitorStats().catch((err) => console.error(err));
@@ -299,4 +350,5 @@ setInterval(() => {
 
 setInterval(() => {
   refreshVisitorStats().catch((err) => console.error(err));
+  refreshSlowWindows().catch((err) => console.error(err));
 }, STATS_INTERVAL_MS);

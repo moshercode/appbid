@@ -19,6 +19,25 @@ extend type Query {
     first: Bid_FirstRow
   ): Bid @fdc_generated(from: "Bid", purpose: QUERY_SINGLE)
   """
+  ✨ Look up a single `Click` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  click(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Click_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Click_FirstRow
+  ): Click @fdc_generated(from: "Click", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `Listing` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   listing(
@@ -57,6 +76,40 @@ extend type Query {
     first: Visit_FirstRow
   ): Visit @fdc_generated(from: "Visit", purpose: QUERY_SINGLE)
   """
+  ✨ List `AnnualLeaderboardEntry` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  annualLeaderboardEntries(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: AnnualLeaderboardEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [AnnualLeaderboardEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: AnnualLeaderboardEntry_Having
+  ): [AnnualLeaderboardEntry!]! @fdc_generated(from: "AnnualLeaderboardEntry", purpose: QUERY_MULTIPLE)
+  """
   ✨ List `Bid` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
   bids(
@@ -91,6 +144,40 @@ extend type Query {
     having: Bid_Having
   ): [Bid!]! @fdc_generated(from: "Bid", purpose: QUERY_MULTIPLE)
   """
+  ✨ List `Click` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  clicks(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Click_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Click_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Click_Having
+  ): [Click!]! @fdc_generated(from: "Click", purpose: QUERY_MULTIPLE)
+  """
   ✨ List `Listing` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
   listings(
@@ -124,6 +211,40 @@ extend type Query {
     """
     having: Listing_Having
   ): [Listing!]! @fdc_generated(from: "Listing", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `MonthlyLeaderboardEntry` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  monthlyLeaderboardEntries(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: MonthlyLeaderboardEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [MonthlyLeaderboardEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: MonthlyLeaderboardEntry_Having
+  ): [MonthlyLeaderboardEntry!]! @fdc_generated(from: "MonthlyLeaderboardEntry", purpose: QUERY_MULTIPLE)
   """
   ✨ List `Visit` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
@@ -192,4 +313,38 @@ extend type Query {
     """
     having: VisitStat_Having
   ): [VisitStat!]! @fdc_generated(from: "VisitStat", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `WeeklyLeaderboardEntry` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  weeklyLeaderboardEntries(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: WeeklyLeaderboardEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [WeeklyLeaderboardEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: WeeklyLeaderboardEntry_Having
+  ): [WeeklyLeaderboardEntry!]! @fdc_generated(from: "WeeklyLeaderboardEntry", purpose: QUERY_MULTIPLE)
 }

@@ -53,30 +53,43 @@ export function placeBid(dcOrVars, vars) {
   return executeMutation(placeBidRef(dcInstance, inputVars));
 }
 
-export const listLeaderboardRef = (dcOrVars, vars) => {
+export const listWeeklyLeaderboardRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListLeaderboard', inputVars);
+  return queryRef(dcInstance, 'ListWeeklyLeaderboard', inputVars);
 }
-listLeaderboardRef.operationName = 'ListLeaderboard';
+listWeeklyLeaderboardRef.operationName = 'ListWeeklyLeaderboard';
 
-export function listLeaderboard(dcOrVars, varsOrOptions, options) {
+export function listWeeklyLeaderboard(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
-  return executeQuery(listLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+  return executeQuery(listWeeklyLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 
-export const getTopListingRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+export const listMonthlyLeaderboardRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'GetTopListing');
+  return queryRef(dcInstance, 'ListMonthlyLeaderboard', inputVars);
 }
-getTopListingRef.operationName = 'GetTopListing';
+listMonthlyLeaderboardRef.operationName = 'ListMonthlyLeaderboard';
 
-export function getTopListing(dcOrOptions, options) {
+export function listMonthlyLeaderboard(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(getTopListingRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
+  return executeQuery(listMonthlyLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+
+export const listAnnualLeaderboardRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAnnualLeaderboard', inputVars);
+}
+listAnnualLeaderboardRef.operationName = 'ListAnnualLeaderboard';
+
+export function listAnnualLeaderboard(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
+  return executeQuery(listAnnualLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 
 export const listRecentBidsRef = (dcOrVars, vars) => {

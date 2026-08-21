@@ -14,7 +14,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { logVisit, incrementClickCount, createListing, placeBid, listLeaderboard, getTopListing, listRecentBids, getListingById, getListingByUrl, getVisitorStats } from '@appbid/dataconnect';
+import { logVisit, incrementClickCount, createListing, placeBid, listWeeklyLeaderboard, listMonthlyLeaderboard, listAnnualLeaderboard, listRecentBids, getListingById, getListingByUrl } from '@appbid/dataconnect';
 
 
 // Operation LogVisit: 
@@ -29,11 +29,14 @@ const { data } = await CreateListing(dataConnect, createListingVars);
 // Operation PlaceBid:  For variables, look at type PlaceBidVars in ../index.d.ts
 const { data } = await PlaceBid(dataConnect, placeBidVars);
 
-// Operation ListLeaderboard:  For variables, look at type ListLeaderboardVars in ../index.d.ts
-const { data } = await ListLeaderboard(dataConnect, listLeaderboardVars);
+// Operation ListWeeklyLeaderboard:  For variables, look at type ListWeeklyLeaderboardVars in ../index.d.ts
+const { data } = await ListWeeklyLeaderboard(dataConnect, listWeeklyLeaderboardVars);
 
-// Operation GetTopListing: 
-const { data } = await GetTopListing(dataConnect);
+// Operation ListMonthlyLeaderboard:  For variables, look at type ListMonthlyLeaderboardVars in ../index.d.ts
+const { data } = await ListMonthlyLeaderboard(dataConnect, listMonthlyLeaderboardVars);
+
+// Operation ListAnnualLeaderboard:  For variables, look at type ListAnnualLeaderboardVars in ../index.d.ts
+const { data } = await ListAnnualLeaderboard(dataConnect, listAnnualLeaderboardVars);
 
 // Operation ListRecentBids:  For variables, look at type ListRecentBidsVars in ../index.d.ts
 const { data } = await ListRecentBids(dataConnect, listRecentBidsVars);
@@ -43,9 +46,6 @@ const { data } = await GetListingById(dataConnect, getListingByIdVars);
 
 // Operation GetListingByUrl:  For variables, look at type GetListingByUrlVars in ../index.d.ts
 const { data } = await GetListingByUrl(dataConnect, getListingByUrlVars);
-
-// Operation GetVisitorStats: 
-const { data } = await GetVisitorStats(dataConnect);
 
 
 ```

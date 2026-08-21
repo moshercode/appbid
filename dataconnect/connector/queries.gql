@@ -1,26 +1,44 @@
 # ── Queries — appbid connector ───────────────────────────────────────────────
 
-query ListLeaderboard($limit: Int = 50)
+query ListWeeklyLeaderboard($limit: Int = 50)
   @auth(level: PUBLIC, insecureReason: "Public leaderboard, no auth in this MVP") {
-  listings(orderBy: { currentBid: DESC }, limit: $limit) {
-    id
+  weeklyLeaderboardEntries(orderBy: { periodTotal: DESC }, limit: $limit) {
+    listingId
     displayName
     url
     tagline
     iconUrl
-    currentBid
-    clickCount
-    updatedAt
+    periodTotal
+    lastBidAt
+    periodClicks
   }
 }
 
-query GetTopListing
+query ListMonthlyLeaderboard($limit: Int = 50)
   @auth(level: PUBLIC, insecureReason: "Public leaderboard, no auth in this MVP") {
-  listings(orderBy: { currentBid: DESC }, limit: 1) {
-    id
+  monthlyLeaderboardEntries(orderBy: { periodTotal: DESC }, limit: $limit) {
+    listingId
     displayName
     url
-    currentBid
+    tagline
+    iconUrl
+    periodTotal
+    lastBidAt
+    periodClicks
+  }
+}
+
+query ListAnnualLeaderboard($limit: Int = 50)
+  @auth(level: PUBLIC, insecureReason: "Public leaderboard, no auth in this MVP") {
+  annualLeaderboardEntries(orderBy: { periodTotal: DESC }, limit: $limit) {
+    listingId
+    displayName
+    url
+    tagline
+    iconUrl
+    periodTotal
+    lastBidAt
+    periodClicks
   }
 }
 
@@ -28,7 +46,7 @@ query ListRecentBids($limit: Int = 20)
   @auth(level: PUBLIC, insecureReason: "Public activity feed, no auth in this MVP") {
   bids(orderBy: { createdAt: DESC }, limit: $limit) {
     id
-    amount
+    deltaAmount
     bidderName
     displayName
     url

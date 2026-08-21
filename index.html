@@ -31,6 +31,7 @@
     --silver: #c8cede;
     --bronze: #d99a6c;
     --danger: #ff7b7b;
+    --accent-ink: #0b0d12;
   }
   :root[data-theme="light"] {
     --bg: #f4f5f9;
@@ -47,6 +48,7 @@
     --silver: #7c8496;
     --bronze: #b06a34;
     --danger: #d13c3c;
+    --accent-ink: #ffffff;
   }
   * { box-sizing: border-box; }
   html, body {
@@ -242,14 +244,15 @@
     border-color: var(--accent-2);
   }
   .outbid-bar button {
+    order: 3;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     min-height: 46px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    color: var(--on-accent);
+    background: var(--accent);
+    color: var(--accent-ink);
     border: none;
     font-weight: 700;
     font-size: 0.92rem;
@@ -265,7 +268,9 @@
     color: var(--text-dim);
   }
 
-  .tagline-row {
+  .outbid-bar .tagline-row {
+    order: 4;
+    flex: 1 1 100%;
     max-width: 520px;
     margin: 10px auto 0;
   }
@@ -275,12 +280,12 @@
     border: 1px dashed var(--border);
     border-radius: 999px;
     padding: 9px 16px;
-    color: var(--text-dim);
+    color: var(--text);
     font-size: 0.82rem;
     font-family: inherit;
     text-align: center;
   }
-  .tagline-row input:focus { outline: none; border-color: var(--accent-2); color: var(--text); }
+  .tagline-row input:focus { outline: none; border-color: var(--accent-2); }
 
   .outbid-msg {
     text-align: center;
@@ -315,6 +320,37 @@
   }
   .section-title .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
 
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .section-title-row .section-title { margin-bottom: 0; }
+  .board-tabs {
+    display: inline-flex;
+    gap: 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .board-tab {
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .board-tab:hover { color: var(--text); }
+  .board-tab.active { background: var(--accent); color: var(--accent-ink); }
+
   /* Activity list */
   .activity-card {
     background: var(--card);
@@ -337,7 +373,7 @@
   li.empty { text-align: center; padding: 20px 0 !important; border-bottom: none !important; }
 
   /* Leaderboard rows */
-  .rank-list { display: grid; gap: 10px; }
+  .rank-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .rank-card {
     display: flex;
     align-items: center;
@@ -385,6 +421,7 @@
     color: var(--text);
     font-weight: 700;
     font-size: 0.95rem;
+    overflow-wrap: anywhere;
   }
   .rank-card:hover .rank-name { color: var(--accent-2); }
   .rank-tagline {
@@ -440,6 +477,27 @@
     text-decoration: none;
   }
   footer.site-footer a:hover { color: var(--accent-2); }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 24px 14px 48px; }
+
+    header.top { flex-wrap: wrap; }
+    .live-pill { font-size: 0.72rem; padding: 5px 10px; gap: 6px; }
+
+    .outbid-bar { flex-direction: column; }
+    .outbid-bar input[type="text"] { flex: 1 1 auto; width: 100%; }
+    .outbid-bar #outbid-display-name { flex: 1 1 auto; }
+    .outbid-bar .tagline-row { order: 3; flex: 1 1 auto; max-width: none; margin: 0; }
+    .outbid-bar button { order: 4; width: 100%; margin-top: 4px; }
+
+    .rank-card { padding: 12px 14px; gap: 10px; }
+    .rank-badge { width: 34px; height: 34px; font-size: 0.75rem; }
+    .rank-name { font-size: 0.88rem; }
+    .rank-tagline { font-size: 0.75rem; }
+    .rank-stats { text-align: right; }
+    .rank-price { font-size: 0.92rem; }
+    .rank-clicks { font-size: 0.68rem; }
+  }
 </style>
 </head>
 <body>
@@ -477,9 +535,9 @@
           <input type="text" id="outbid-url" placeholder="Your site or app store URL" required maxlength="200" autocomplete="off">
           <input type="text" id="outbid-display-name" placeholder="Display name" required maxlength="60" autocomplete="off">
           <button type="submit" id="outbid-submit">Outbid</button>
-        </div>
-        <div class="tagline-row">
-          <input type="text" id="outbid-tagline" placeholder="Add a short description (optional)" maxlength="120">
+          <div class="tagline-row">
+            <input type="text" id="outbid-tagline" placeholder="Add a short description (optional)" maxlength="120">
+          </div>
         </div>
       </form>
       <p class="outbid-msg" id="outbid-msg"></p>
@@ -496,7 +554,14 @@
     </div>
 
     <div class="section">
-      <div class="section-title">Leaderboard</div>
+      <div class="section-title-row">
+        <div class="section-title">Leaderboard</div>
+        <div class="board-tabs" id="leaderboard-tabs" role="tablist" aria-label="Leaderboard window">
+          <button type="button" class="board-tab active" data-window="week" role="tab" aria-selected="true">Semanal</button>
+          <button type="button" class="board-tab" data-window="month" role="tab" aria-selected="false">Mensual</button>
+          <button type="button" class="board-tab" data-window="year" role="tab" aria-selected="false">Anual</button>
+        </div>
+      </div>
       <div class="rank-list" id="leaderboard-body">
         <div class="empty-state">Loading leaderboard...</div>
       </div>

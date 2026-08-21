@@ -26,11 +26,22 @@ type Listing @table {
 type Bid @table {
   id: UUID! @default(expr: "uuidV4()")
   listing: Listing!
-  amount: Float!
+  amount: Float!                              # Total acumulado tras esta puja (histórico, no usado para los rankings por período)
+  deltaAmount: Float! @default(value: 0)      # Importe realmente pagado en esta transacción — usado para sumar por semana/mes/año
   bidderName: String                          # Nombre mostrado en el feed (opcional)
   displayName: String!                         # Copia del displayName del listing en el momento de la puja
   url: String!                                 # Copia de la url del listing en el momento de la puja
   stripeSessionId: String @unique              # Idempotencia: evita duplicar la puja si Stripe reintenta el webhook
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# ── Click ─────────────────────────────────────────────────────────────────────
+# Un registro por clic en una tarjeta del ranking, para poder contar clics por
+# período (semana/mes/año), igual que Bid permite sumar importes por período.
+
+type Click @table {
+  id: UUID! @default(expr: "uuidV4()")
+  listing: Listing!
   createdAt: Timestamp! @default(expr: "request.time")
 }
 
@@ -53,4 +64,105 @@ type VisitStat @view(sql: """
 """) {
   lastHour: Int
   last24h: Int
+}
+
+# ── Rankings por período ───────────────────────────────────────────────────────
+# Semanal, mensual y anual: cada vista suma Bid.deltaAmount y cuenta Click por
+# listing dentro de una ventana de calendario fija (date_trunc es ISO-8601,
+# empieza en lunes para 'week'). Un listing sin pujas en la ventana simplemente
+# no aparece (JOIN interno con la subconsulta de pujas) — así es como el
+# ranking semanal "se vacía" cada lunes sin necesidad de un reset explícito.
+# Los clics usan LEFT JOIN + COALESCE porque un listing puede tener pujas pero
+# cero clics en la misma ventana y debe seguir apareciendo, con 0 clics.
+# Ambas tablas se agregan en subconsultas separadas antes de unirlas a Listing
+# para evitar un producto cruzado (fan-out) entre filas de bid y de click.
+
+type WeeklyLeaderboardEntry @view(
+  plural: "weeklyLeaderboardEntries"
+  singular: "weeklyLeaderboardEntry"
+  sql: """
+    SELECT
+      l.id AS listing_id, l.display_name AS display_name, l.url AS url,
+      l.tagline AS tagline, l.icon_url AS icon_url,
+      bt.period_total AS period_total, bt.last_bid_at AS last_bid_at,
+      COALESCE(ct.period_clicks, 0) AS period_clicks
+    FROM "listing" AS l
+    JOIN (
+      SELECT listing_id, SUM(delta_amount) AS period_total, MAX(created_at) AS last_bid_at
+      FROM "bid" WHERE created_at >= date_trunc('week', now()) GROUP BY listing_id
+    ) AS bt ON bt.listing_id = l.id
+    LEFT JOIN (
+      SELECT listing_id, COUNT(*) AS period_clicks
+      FROM "click" WHERE created_at >= date_trunc('week', now()) GROUP BY listing_id
+    ) AS ct ON ct.listing_id = l.id
+  """
+) {
+  listingId: UUID
+  displayName: String
+  url: String
+  tagline: String
+  iconUrl: String
+  periodTotal: Float
+  lastBidAt: Timestamp
+  periodClicks: Int
+}
+
+type MonthlyLeaderboardEntry @view(
+  plural: "monthlyLeaderboardEntries"
+  singular: "monthlyLeaderboardEntry"
+  sql: """
+    SELECT
+      l.id AS listing_id, l.display_name AS display_name, l.url AS url,
+      l.tagline AS tagline, l.icon_url AS icon_url,
+      bt.period_total AS period_total, bt.last_bid_at AS last_bid_at,
+      COALESCE(ct.period_clicks, 0) AS period_clicks
+    FROM "listing" AS l
+    JOIN (
+      SELECT listing_id, SUM(delta_amount) AS period_total, MAX(created_at) AS last_bid_at
+      FROM "bid" WHERE created_at >= date_trunc('month', now()) GROUP BY listing_id
+    ) AS bt ON bt.listing_id = l.id
+    LEFT JOIN (
+      SELECT listing_id, COUNT(*) AS period_clicks
+      FROM "click" WHERE created_at >= date_trunc('month', now()) GROUP BY listing_id
+    ) AS ct ON ct.listing_id = l.id
+  """
+) {
+  listingId: UUID
+  displayName: String
+  url: String
+  tagline: String
+  iconUrl: String
+  periodTotal: Float
+  lastBidAt: Timestamp
+  periodClicks: Int
+}
+
+type AnnualLeaderboardEntry @view(
+  plural: "annualLeaderboardEntries"
+  singular: "annualLeaderboardEntry"
+  sql: """
+    SELECT
+      l.id AS listing_id, l.display_name AS display_name, l.url AS url,
+      l.tagline AS tagline, l.icon_url AS icon_url,
+      bt.period_total AS period_total, bt.last_bid_at AS last_bid_at,
+      COALESCE(ct.period_clicks, 0) AS period_clicks
+    FROM "listing" AS l
+    JOIN (
+      SELECT listing_id, SUM(delta_amount) AS period_total, MAX(created_at) AS last_bid_at
+      FROM "bid" WHERE created_at >= date_trunc('year', now()) GROUP BY listing_id
+    ) AS bt ON bt.listing_id = l.id
+    LEFT JOIN (
+      SELECT listing_id, COUNT(*) AS period_clicks
+      FROM "click" WHERE created_at >= date_trunc('year', now()) GROUP BY listing_id
+    ) AS ct ON ct.listing_id = l.id
+  """
+) {
+  listingId: UUID
+  displayName: String
+  url: String
+  tagline: String
+  iconUrl: String
+  periodTotal: Float
+  lastBidAt: Timestamp
+  periodClicks: Int
 }

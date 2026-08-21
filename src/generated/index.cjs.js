@@ -63,33 +63,48 @@ exports.placeBid = function placeBid(dcOrVars, vars) {
 }
 ;
 
-const listLeaderboardRef = (dcOrVars, vars) => {
+const listWeeklyLeaderboardRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListLeaderboard', inputVars);
+  return queryRef(dcInstance, 'ListWeeklyLeaderboard', inputVars);
 }
-listLeaderboardRef.operationName = 'ListLeaderboard';
-exports.listLeaderboardRef = listLeaderboardRef;
+listWeeklyLeaderboardRef.operationName = 'ListWeeklyLeaderboard';
+exports.listWeeklyLeaderboardRef = listWeeklyLeaderboardRef;
 
-exports.listLeaderboard = function listLeaderboard(dcOrVars, varsOrOptions, options) {
+exports.listWeeklyLeaderboard = function listWeeklyLeaderboard(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
-  return executeQuery(listLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+  return executeQuery(listWeeklyLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;
 
-const getTopListingRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+const listMonthlyLeaderboardRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'GetTopListing');
+  return queryRef(dcInstance, 'ListMonthlyLeaderboard', inputVars);
 }
-getTopListingRef.operationName = 'GetTopListing';
-exports.getTopListingRef = getTopListingRef;
+listMonthlyLeaderboardRef.operationName = 'ListMonthlyLeaderboard';
+exports.listMonthlyLeaderboardRef = listMonthlyLeaderboardRef;
 
-exports.getTopListing = function getTopListing(dcOrOptions, options) {
+exports.listMonthlyLeaderboard = function listMonthlyLeaderboard(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(getTopListingRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
+  return executeQuery(listMonthlyLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const listAnnualLeaderboardRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAnnualLeaderboard', inputVars);
+}
+listAnnualLeaderboardRef.operationName = 'ListAnnualLeaderboard';
+exports.listAnnualLeaderboardRef = listAnnualLeaderboardRef;
+
+exports.listAnnualLeaderboard = function listAnnualLeaderboard(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
+  return executeQuery(listAnnualLeaderboardRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;
 

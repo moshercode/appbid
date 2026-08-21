@@ -9,6 +9,15 @@ extend type Mutation {
     data: Bid_Data!
   ): Bid_KeyOutput! @fdc_generated(from: "Bid", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `Click` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  click_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Click_Data!
+  ): Click_KeyOutput! @fdc_generated(from: "Click", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Listing` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   listing_insert(
@@ -35,6 +44,15 @@ extend type Mutation {
     """
     data: [Bid_Data!]!
   ): [Bid_KeyOutput!]! @fdc_generated(from: "Bid", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Click` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  click_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Click_Data!]!
+  ): [Click_KeyOutput!]! @fdc_generated(from: "Click", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Listing` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -63,6 +81,15 @@ extend type Mutation {
     data: Bid_Data!
   ): Bid_KeyOutput! @fdc_generated(from: "Bid", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `Click` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Click`.
+  """
+  click_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Click_Data!
+  ): Click_KeyOutput! @fdc_generated(from: "Click", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Listing` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Listing`.
   """
   listing_upsert(
@@ -89,6 +116,15 @@ extend type Mutation {
     """
     data: [Bid_Data!]!
   ): [Bid_KeyOutput!]! @fdc_generated(from: "Bid", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Click` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Click`.
+  """
+  click_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Click_Data!]!
+  ): [Click_KeyOutput!]! @fdc_generated(from: "Click", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `Listing` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Listing`.
   """
@@ -131,6 +167,30 @@ extend type Mutation {
     """
     data: Bid_Data!
   ): Bid_KeyOutput @fdc_generated(from: "Bid", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Click` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Click` or `null` if not found.
+  """
+  click_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Click_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Click_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Click_Data!
+  ): Click_KeyOutput @fdc_generated(from: "Click", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Listing` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Listing` or `null` if not found.
   """
@@ -199,6 +259,25 @@ extend type Mutation {
     data: Bid_Data!
   ): Int! @fdc_generated(from: "Bid", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `Click` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  click_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Click_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Click_Data!
+  ): Int! @fdc_generated(from: "Click", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Listing` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   listing_updateMany(
@@ -256,6 +335,25 @@ extend type Mutation {
     first: Bid_FirstRow
   ): Bid_KeyOutput @fdc_generated(from: "Bid", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `Click` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  click_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Click_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Click_FirstRow
+  ): Click_KeyOutput @fdc_generated(from: "Click", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Listing` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   listing_delete(
@@ -307,6 +405,20 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Bid", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Click` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  click_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Click_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Click", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Listing` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

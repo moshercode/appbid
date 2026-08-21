@@ -15,6 +15,11 @@ export interface Bid_Key {
   __typename?: 'Bid_Key';
 }
 
+export interface Click_Key {
+  id: UUIDString;
+  __typename?: 'Click_Key';
+}
+
 export interface CreateListingData {
   newListing: Listing_Key;
   bid_insert: Bid_Key;
@@ -62,15 +67,6 @@ export interface GetListingByUrlVariables {
   url: string;
 }
 
-export interface GetTopListingData {
-  listings: ({
-    id: UUIDString;
-    displayName: string;
-    url: string;
-    currentBid: number;
-  } & Listing_Key)[];
-}
-
 export interface GetVisitorStatsData {
   visitStats: ({
     lastHour?: number | null;
@@ -80,33 +76,51 @@ export interface GetVisitorStatsData {
 
 export interface IncrementClickCountData {
   listing_update?: Listing_Key | null;
+  click_insert: Click_Key;
 }
 
 export interface IncrementClickCountVariables {
   listingId: UUIDString;
 }
 
-export interface ListLeaderboardData {
-  listings: ({
-    id: UUIDString;
-    displayName: string;
-    url: string;
+export interface ListAnnualLeaderboardData {
+  annualLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
     tagline?: string | null;
     iconUrl?: string | null;
-    currentBid: number;
-    clickCount: number;
-    updatedAt: TimestampString;
-  } & Listing_Key)[];
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
 }
 
-export interface ListLeaderboardVariables {
+export interface ListAnnualLeaderboardVariables {
+  limit?: number | null;
+}
+
+export interface ListMonthlyLeaderboardData {
+  monthlyLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
+    tagline?: string | null;
+    iconUrl?: string | null;
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
+}
+
+export interface ListMonthlyLeaderboardVariables {
   limit?: number | null;
 }
 
 export interface ListRecentBidsData {
   bids: ({
     id: UUIDString;
-    amount: number;
+    deltaAmount: number;
     bidderName?: string | null;
     displayName: string;
     url: string;
@@ -115,6 +129,23 @@ export interface ListRecentBidsData {
 }
 
 export interface ListRecentBidsVariables {
+  limit?: number | null;
+}
+
+export interface ListWeeklyLeaderboardData {
+  weeklyLeaderboardEntries: ({
+    listingId?: UUIDString | null;
+    displayName?: string | null;
+    url?: string | null;
+    tagline?: string | null;
+    iconUrl?: string | null;
+    periodTotal?: number | null;
+    lastBidAt?: TimestampString | null;
+    periodClicks?: number | null;
+  })[];
+}
+
+export interface ListWeeklyLeaderboardVariables {
   limit?: number | null;
 }
 
@@ -135,6 +166,7 @@ export interface PlaceBidData {
 export interface PlaceBidVariables {
   listingId: UUIDString;
   amount: number;
+  deltaAmount?: number | null;
   bidderName?: string | null;
   displayName: string;
   url: string;
@@ -197,29 +229,41 @@ export const placeBidRef: PlaceBidRef;
 export function placeBid(vars: PlaceBidVariables): MutationPromise<PlaceBidData, PlaceBidVariables>;
 export function placeBid(dc: DataConnect, vars: PlaceBidVariables): MutationPromise<PlaceBidData, PlaceBidVariables>;
 
-interface ListLeaderboardRef {
+interface ListWeeklyLeaderboardRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars?: ListLeaderboardVariables): QueryRef<ListLeaderboardData, ListLeaderboardVariables>;
+  (vars?: ListWeeklyLeaderboardVariables): QueryRef<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars?: ListLeaderboardVariables): QueryRef<ListLeaderboardData, ListLeaderboardVariables>;
+  (dc: DataConnect, vars?: ListWeeklyLeaderboardVariables): QueryRef<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
   operationName: string;
 }
-export const listLeaderboardRef: ListLeaderboardRef;
+export const listWeeklyLeaderboardRef: ListWeeklyLeaderboardRef;
 
-export function listLeaderboard(vars?: ListLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListLeaderboardData, ListLeaderboardVariables>;
-export function listLeaderboard(dc: DataConnect, vars?: ListLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListLeaderboardData, ListLeaderboardVariables>;
+export function listWeeklyLeaderboard(vars?: ListWeeklyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
+export function listWeeklyLeaderboard(dc: DataConnect, vars?: ListWeeklyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListWeeklyLeaderboardData, ListWeeklyLeaderboardVariables>;
 
-interface GetTopListingRef {
+interface ListMonthlyLeaderboardRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<GetTopListingData, undefined>;
+  (vars?: ListMonthlyLeaderboardVariables): QueryRef<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<GetTopListingData, undefined>;
+  (dc: DataConnect, vars?: ListMonthlyLeaderboardVariables): QueryRef<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
   operationName: string;
 }
-export const getTopListingRef: GetTopListingRef;
+export const listMonthlyLeaderboardRef: ListMonthlyLeaderboardRef;
 
-export function getTopListing(options?: ExecuteQueryOptions): QueryPromise<GetTopListingData, undefined>;
-export function getTopListing(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetTopListingData, undefined>;
+export function listMonthlyLeaderboard(vars?: ListMonthlyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
+export function listMonthlyLeaderboard(dc: DataConnect, vars?: ListMonthlyLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListMonthlyLeaderboardData, ListMonthlyLeaderboardVariables>;
+
+interface ListAnnualLeaderboardRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars?: ListAnnualLeaderboardVariables): QueryRef<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars?: ListAnnualLeaderboardVariables): QueryRef<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
+  operationName: string;
+}
+export const listAnnualLeaderboardRef: ListAnnualLeaderboardRef;
+
+export function listAnnualLeaderboard(vars?: ListAnnualLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
+export function listAnnualLeaderboard(dc: DataConnect, vars?: ListAnnualLeaderboardVariables, options?: ExecuteQueryOptions): QueryPromise<ListAnnualLeaderboardData, ListAnnualLeaderboardVariables>;
 
 interface ListRecentBidsRef {
   /* Allow users to create refs without passing in DataConnect */
