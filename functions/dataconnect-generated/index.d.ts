@@ -22,6 +22,7 @@ export interface CreateListingVariables {
   displayName: string;
   url: string;
   tagline?: string | null;
+  iconUrl?: string | null;
   ownerEmail?: string | null;
   initialBid: number;
   stripeSessionId?: string | null;
@@ -68,12 +69,28 @@ export interface GetTopListingData {
   } & Listing_Key)[];
 }
 
+export interface GetVisitorStatsData {
+  visitStats: ({
+    lastHour?: number | null;
+    last24h?: number | null;
+  })[];
+}
+
+export interface IncrementClickCountData {
+  listing_update?: Listing_Key | null;
+}
+
+export interface IncrementClickCountVariables {
+  listingId: UUIDString;
+}
+
 export interface ListLeaderboardData {
   listings: ({
     id: UUIDString;
     displayName: string;
     url: string;
     tagline?: string | null;
+    iconUrl?: string | null;
     currentBid: number;
     clickCount: number;
     updatedAt: TimestampString;
@@ -104,6 +121,10 @@ export interface Listing_Key {
   __typename?: 'Listing_Key';
 }
 
+export interface LogVisitData {
+  visit_insert: Visit_Key;
+}
+
 export interface PlaceBidData {
   bid_insert: Bid_Key;
   listing_update?: Listing_Key | null;
@@ -116,9 +137,25 @@ export interface PlaceBidVariables {
   displayName: string;
   url: string;
   tagline?: string | null;
+  iconUrl?: string | null;
   ownerEmail?: string | null;
   stripeSessionId?: string | null;
 }
+
+export interface Visit_Key {
+  id: UUIDString;
+  __typename?: 'Visit_Key';
+}
+
+/** Generated Node Admin SDK operation action function for the 'LogVisit' Mutation. Allow users to execute without passing in DataConnect. */
+export function logVisit(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<LogVisitData>>;
+/** Generated Node Admin SDK operation action function for the 'LogVisit' Mutation. Allow users to pass in custom DataConnect instances. */
+export function logVisit(options?: OperationOptions): Promise<ExecuteOperationResponse<LogVisitData>>;
+
+/** Generated Node Admin SDK operation action function for the 'IncrementClickCount' Mutation. Allow users to execute without passing in DataConnect. */
+export function incrementClickCount(dc: DataConnect, vars: IncrementClickCountVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<IncrementClickCountData>>;
+/** Generated Node Admin SDK operation action function for the 'IncrementClickCount' Mutation. Allow users to pass in custom DataConnect instances. */
+export function incrementClickCount(vars: IncrementClickCountVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<IncrementClickCountData>>;
 
 /** Generated Node Admin SDK operation action function for the 'CreateListing' Mutation. Allow users to execute without passing in DataConnect. */
 export function createListing(dc: DataConnect, vars: CreateListingVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateListingData>>;
@@ -154,4 +191,9 @@ export function getListingById(vars: GetListingByIdVariables, options?: Operatio
 export function getListingByUrl(dc: DataConnect, vars: GetListingByUrlVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetListingByUrlData>>;
 /** Generated Node Admin SDK operation action function for the 'GetListingByUrl' Query. Allow users to pass in custom DataConnect instances. */
 export function getListingByUrl(vars: GetListingByUrlVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetListingByUrlData>>;
+
+/** Generated Node Admin SDK operation action function for the 'GetVisitorStats' Query. Allow users to execute without passing in DataConnect. */
+export function getVisitorStats(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<GetVisitorStatsData>>;
+/** Generated Node Admin SDK operation action function for the 'GetVisitorStats' Query. Allow users to pass in custom DataConnect instances. */
+export function getVisitorStats(options?: OperationOptions): Promise<ExecuteOperationResponse<GetVisitorStatsData>>;
 

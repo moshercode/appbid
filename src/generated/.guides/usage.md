@@ -14,8 +14,14 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createListing, placeBid, listLeaderboard, getTopListing, listRecentBids, getListingById, getListingByUrl } from '@appbid/dataconnect';
+import { logVisit, incrementClickCount, createListing, placeBid, listLeaderboard, getTopListing, listRecentBids, getListingById, getListingByUrl, getVisitorStats } from '@appbid/dataconnect';
 
+
+// Operation LogVisit: 
+const { data } = await LogVisit(dataConnect);
+
+// Operation IncrementClickCount:  For variables, look at type IncrementClickCountVars in ../index.d.ts
+const { data } = await IncrementClickCount(dataConnect, incrementClickCountVars);
 
 // Operation CreateListing:  For variables, look at type CreateListingVars in ../index.d.ts
 const { data } = await CreateListing(dataConnect, createListingVars);
@@ -37,6 +43,9 @@ const { data } = await GetListingById(dataConnect, getListingByIdVars);
 
 // Operation GetListingByUrl:  For variables, look at type GetListingByUrlVars in ../index.d.ts
 const { data } = await GetListingByUrl(dataConnect, getListingByUrlVars);
+
+// Operation GetVisitorStats: 
+const { data } = await GetVisitorStats(dataConnect);
 
 
 ```

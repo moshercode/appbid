@@ -198,6 +198,15 @@ extend type Listing {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Listing.displayName", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Listing` table where the `iconUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  iconUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.iconUrl", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `Listing` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   id_count(
@@ -314,4 +323,128 @@ extend type Listing {
   A generated field that is used for caching results in SDKs.
   """
   _id: ID! @fdc_generated(from: "Listing.id", purpose: ENTITY_ID)
+}
+extend type Visit {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Visit", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Visit` table.
+  """
+  _count: Int! @fdc_generated(from: "Visit.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Visit` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Visit.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Visit` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Visit.id", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `Visit` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "Visit.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `Visit` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "Visit.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Visit.id", purpose: ENTITY_ID)
+}
+extend type VisitStat {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "VisitStat", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `VisitStat` table.
+  """
+  _count: Int! @fdc_generated(from: "VisitStat.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `VisitStat` table where the `last24h` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  last24h_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "VisitStat.last24h", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `VisitStat` table where the `lastHour` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lastHour_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "VisitStat.lastHour", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `last24h` field in the `VisitStat` table.
+  """
+  last24h_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "VisitStat.last24h", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `lastHour` field in the `VisitStat` table.
+  """
+  lastHour_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "VisitStat.lastHour", purpose: QUERY_SUM)
+  """
+  ✨ Average the `last24h` field in the `VisitStat` table.
+  """
+  last24h_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "VisitStat.last24h", purpose: QUERY_AVG)
+  """
+  ✨ Average the `lastHour` field in the `VisitStat` table.
+  """
+  lastHour_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "VisitStat.lastHour", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `last24h` field in the `VisitStat` table.
+  """
+  last24h_min: Int @fdc_generated(from: "VisitStat.last24h", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `lastHour` field in the `VisitStat` table.
+  """
+  lastHour_min: Int @fdc_generated(from: "VisitStat.lastHour", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `last24h` field in the `VisitStat` table.
+  """
+  last24h_max: Int @fdc_generated(from: "VisitStat.last24h", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `lastHour` field in the `VisitStat` table.
+  """
+  lastHour_max: Int @fdc_generated(from: "VisitStat.lastHour", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "VisitStat", purpose: ENTITY_ID)
 }

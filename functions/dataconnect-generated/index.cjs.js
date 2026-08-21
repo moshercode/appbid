@@ -7,6 +7,20 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
+function logVisit(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('LogVisit', undefined, inputOpts);
+}
+exports.logVisit = logVisit;
+
+function incrementClickCount(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('IncrementClickCount', inputVars, inputOpts);
+}
+exports.incrementClickCount = incrementClickCount;
+
 function createListing(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
@@ -55,4 +69,11 @@ function getListingByUrl(dcOrVarsOrOptions, varsOrOptions, options) {
   return dcInstance.executeQuery('GetListingByUrl', inputVars, inputOpts);
 }
 exports.getListingByUrl = getListingByUrl;
+
+function getVisitorStats(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('GetVisitorStats', undefined, inputOpts);
+}
+exports.getVisitorStats = getVisitorStats;
 

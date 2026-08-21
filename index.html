@@ -134,6 +134,7 @@
     flex-shrink: 0;
   }
   .live-pill b { color: var(--text); font-weight: 700; }
+  .live-pill .sep { color: var(--border); }
 
   /* Hero */
   .hero { text-align: center; margin-bottom: 8px; }
@@ -242,8 +243,13 @@
   }
   .outbid-bar button {
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 46px;
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    color: #0b0d12;
+    color: var(--on-accent);
     border: none;
     font-weight: 700;
     font-size: 0.92rem;
@@ -251,8 +257,13 @@
     border-radius: 999px;
     cursor: pointer;
   }
-  .outbid-bar button:hover { transform: translateY(-1px); }
-  .outbid-bar button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .outbid-bar button:hover:not(:disabled) { transform: translateY(-1px); }
+  .outbid-bar button:disabled {
+    cursor: not-allowed;
+    transform: none;
+    background: var(--border);
+    color: var(--text-dim);
+  }
 
   .tagline-row {
     max-width: 520px;
@@ -335,7 +346,11 @@
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 14px 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, background 0.15s ease;
   }
+  .rank-card:hover { border-color: var(--accent-2); background: var(--card-hi); }
   .rank-card.rank-1 { border-color: rgba(245, 201, 93, 0.35); background: linear-gradient(135deg, rgba(245, 201, 93, 0.08), var(--card)); }
   .rank-card.rank-2 { border-color: rgba(200, 206, 222, 0.3); }
   .rank-card.rank-3 { border-color: rgba(217, 154, 108, 0.3); }
@@ -348,24 +363,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     font-weight: 800;
     font-size: 0.85rem;
     background: var(--bg-alt);
     border: 1px solid var(--border);
     color: var(--text-dim);
   }
+  .rank-badge.has-icon { border-radius: 11px; }
+  .rank-badge-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   .rank-1 .rank-badge { background: var(--gold); border-color: var(--gold); color: #2a1f00; }
   .rank-2 .rank-badge { background: var(--silver); border-color: var(--silver); color: #1f2230; }
   .rank-3 .rank-badge { background: var(--bronze); border-color: var(--bronze); color: #2a1400; }
 
   .rank-info { flex: 1; min-width: 0; }
-  .rank-info a {
+  .rank-name {
     color: var(--text);
-    text-decoration: none;
     font-weight: 700;
     font-size: 0.95rem;
   }
-  .rank-info a:hover { color: var(--accent-2); }
+  .rank-card:hover .rank-name { color: var(--accent-2); }
   .rank-tagline {
     color: var(--text-dim);
     font-size: 0.8rem;
@@ -379,8 +400,8 @@
     font-size: 0.74rem;
     margin-top: 2px;
   }
+  .rank-stats { flex-shrink: 0; text-align: right; }
   .rank-price {
-    flex-shrink: 0;
     font-weight: 800;
     font-size: 1.05rem;
     font-variant-numeric: tabular-nums;
@@ -389,6 +410,12 @@
   .rank-1 .rank-price { color: var(--gold); }
   .rank-2 .rank-price { color: var(--silver); }
   .rank-3 .rank-price { color: var(--bronze); }
+  .rank-clicks {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    margin-top: 2px;
+    white-space: nowrap;
+  }
   .empty-state {
     text-align: center;
     color: var(--text-dim);
@@ -426,7 +453,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <div class="live-pill"><span class="dot-live"></span><b id="visitor-count">&mdash;</b> online</div>
+        <div class="live-pill"><span class="dot-live"></span><b id="visitors-1h">&mdash;</b> last hour <span class="sep">&middot;</span> <b id="visitors-24h">&mdash;</b> 24h</div>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode">🌙</button>
       </div>
     </header>
@@ -439,7 +466,7 @@
 
       <div class="claim-headline">
         <button type="button" class="stepper-btn" id="bid-minus" aria-label="Decrease bid">&minus;</button>
-        <span class="claim-label">Claim #1 for $<input type="number" id="bid-amount-input" min="1" step="1" value="1"></span>
+        <span class="claim-label">Claim #<span id="claim-rank">1</span> for $<input type="number" id="bid-amount-input" min="1" step="1" value="1"></span>
         <button type="button" class="stepper-btn" id="bid-plus" aria-label="Increase bid">+</button>
       </div>
 
@@ -456,7 +483,7 @@
         </div>
       </form>
       <p class="outbid-msg" id="outbid-msg"></p>
-      <p class="helper-note">Already on the list? Enter the same URL and raise your bid — you'll move up.</p>
+      <p class="helper-note">Already on the list? Enter the same URL — whatever you pay stacks on top of your current bid.</p>
     </div>
 
     <div class="section">

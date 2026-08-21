@@ -2,10 +2,21 @@
 # Bloqueadas para el cliente: solo las llama el backend (Cloud Functions) tras
 # confirmar el pago con Stripe, vía Admin SDK (que ignora @auth).
 
+mutation LogVisit
+  @auth(level: PUBLIC, insecureReason: "Anonymous pageview counter, no auth needed") {
+  visit_insert(data: {})
+}
+
+mutation IncrementClickCount($listingId: UUID!)
+  @auth(level: PUBLIC, insecureReason: "Public click counter, no auth needed") {
+  listing_update(id: $listingId, data: { clickCount_update: { inc: 1 } })
+}
+
 mutation CreateListing(
   $displayName: String!
   $url: String!
   $tagline: String
+  $iconUrl: String
   $ownerEmail: String
   $initialBid: Float!
   $stripeSessionId: String
@@ -15,6 +26,7 @@ mutation CreateListing(
       displayName: $displayName
       url: $url
       tagline: $tagline
+      iconUrl: $iconUrl
       ownerEmail: $ownerEmail
       currentBid: $initialBid
     }
@@ -37,6 +49,7 @@ mutation PlaceBid(
   $displayName: String!
   $url: String!
   $tagline: String
+  $iconUrl: String
   $ownerEmail: String
   $stripeSessionId: String
 ) @auth(level: NO_ACCESS) {
@@ -57,6 +70,7 @@ mutation PlaceBid(
       displayName: $displayName
       url: $url
       tagline: $tagline
+      iconUrl: $iconUrl
       ownerEmail: $ownerEmail
       updatedAt_expr: "request.time"
     }

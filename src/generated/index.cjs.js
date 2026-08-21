@@ -7,6 +7,34 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
+const logVisitRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'LogVisit');
+}
+logVisitRef.operationName = 'LogVisit';
+exports.logVisitRef = logVisitRef;
+
+exports.logVisit = function logVisit(dc) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dc, undefined);
+  return executeMutation(logVisitRef(dcInstance, inputVars));
+}
+;
+
+const incrementClickCountRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'IncrementClickCount', inputVars);
+}
+incrementClickCountRef.operationName = 'IncrementClickCount';
+exports.incrementClickCountRef = incrementClickCountRef;
+
+exports.incrementClickCount = function incrementClickCount(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(incrementClickCountRef(dcInstance, inputVars));
+}
+;
+
 const createListingRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -107,5 +135,20 @@ exports.getListingByUrl = function getListingByUrl(dcOrVars, varsOrOptions, opti
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getListingByUrlRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const getVisitorStatsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetVisitorStats');
+}
+getVisitorStatsRef.operationName = 'GetVisitorStats';
+exports.getVisitorStatsRef = getVisitorStatsRef;
+
+exports.getVisitorStats = function getVisitorStats(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(getVisitorStatsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

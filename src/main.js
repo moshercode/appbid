@@ -1,14 +1,23 @@
 import { dataConnect } from './firebase.js';
-import { listLeaderboard, listRecentBids, getListingByUrl } from './generated/esm/index.esm.js';
+import {
+  listLeaderboard,
+  listRecentBids,
+  logVisit,
+  getVisitorStats,
+  incrementClickCount,
+} from './generated/esm/index.esm.js';
 
 const MIN_BID = 1;
 const POLL_INTERVAL_MS = 8000;
+const STATS_INTERVAL_MS = 60000;
 const SERVER_ONLY = { fetchPolicy: 'SERVER_ONLY' };
 const CHECKOUT_ENDPOINT = '/api/create-checkout-session';
 
 const leaderboardEl = document.getElementById('leaderboard-body');
 const activityEl = document.getElementById('activity-feed');
 const themeToggleBtn = document.getElementById('theme-toggle');
+const visitors1hEl = document.getElementById('visitors-1h');
+const visitors24hEl = document.getElementById('visitors-24h');
 
 const bidInput = document.getElementById('bid-amount-input');
 const bidMinusBtn = document.getElementById('bid-minus');
@@ -19,9 +28,11 @@ const outbidDisplayNameInput = document.getElementById('outbid-display-name');
 const outbidTaglineInput = document.getElementById('outbid-tagline');
 const outbidSubmitBtn = document.getElementById('outbid-submit');
 const outbidMsg = document.getElementById('outbid-msg');
+const claimRankEl = document.getElementById('claim-rank');
 
-let minBid = MIN_BID;
+let suggestedBid = MIN_BID;
 let userAdjustedBid = false;
+let currentListings = [];
 
 function applyThemeIcon() {
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -75,14 +86,24 @@ function timeAgo(isoString) {
   return `${days}d ago`;
 }
 
+function computeRankForAmount(amount) {
+  const higherCount = currentListings.filter((l) => l.currentBid > amount).length;
+  return higherCount + 1;
+}
+
+function updateClaimRank() {
+  if (claimRankEl) claimRankEl.textContent = computeRankForAmount(getBidAmount());
+}
+
 function setBidAmount(value) {
-  const clamped = Math.max(minBid, Math.round(value));
+  const clamped = Math.max(MIN_BID, Math.round(value));
   bidInput.value = clamped;
   bidInput.style.width = `${String(clamped).length + 0.5}ch`;
+  updateClaimRank();
 }
 
 function getBidAmount() {
-  return Math.max(minBid, Math.round(Number(bidInput.value) || minBid));
+  return Math.max(MIN_BID, Math.round(Number(bidInput.value) || MIN_BID));
 }
 
 bidMinusBtn.addEventListener('click', () => {
@@ -95,45 +116,69 @@ bidPlusBtn.addEventListener('click', () => {
 });
 bidInput.addEventListener('input', () => {
   userAdjustedBid = true;
+  updateClaimRank();
 });
 bidInput.addEventListener('blur', () => {
   setBidAmount(getBidAmount());
 });
 
 function renderLeaderboard(listings) {
+  currentListings = listings;
+
   if (!listings.length) {
     leaderboardEl.innerHTML = `<div class="empty-state">No listings yet — be the first to claim #1.</div>`;
-    updateMinBid(0);
+    updateSuggestedBid(0);
     return;
   }
 
   leaderboardEl.innerHTML = listings
     .map((l, i) => {
       const rank = i + 1;
+      const badgeContent = l.iconUrl
+        ? `<img src="${escapeHtml(l.iconUrl)}" alt="" class="rank-badge-img" onerror="this.parentElement.classList.remove('has-icon'); this.parentElement.textContent='#${rank}'">`
+        : `#${rank}`;
+      const badgeClass = l.iconUrl ? 'rank-badge has-icon' : 'rank-badge';
       return `
-        <div class="rank-card rank-${rank}">
-          <div class="rank-badge">#${rank}</div>
+        <a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer nofollow" class="rank-card rank-${rank}" data-listing-id="${l.id}">
+          <div class="${badgeClass}">${badgeContent}</div>
           <div class="rank-info">
-            <a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer nofollow">${escapeHtml(l.displayName)}</a>
+            <span class="rank-name">${escapeHtml(l.displayName)}</span>
             ${l.tagline ? `<div class="rank-tagline">${escapeHtml(l.tagline)}</div>` : ''}
             <div class="rank-meta">${timeAgo(l.updatedAt)}</div>
           </div>
-          <div class="rank-price">${formatMoney(l.currentBid)}</div>
-        </div>
+          <div class="rank-stats">
+            <div class="rank-price">${formatMoney(l.currentBid)}</div>
+            <div class="rank-clicks">${(l.clickCount ?? 0).toLocaleString('en-US')} clicks</div>
+          </div>
+        </a>
       `;
     })
     .join('');
 
-  updateMinBid(listings[0]?.currentBid ?? 0);
+  updateSuggestedBid(listings[0]?.currentBid ?? 0);
 }
 
-function updateMinBid(topBid) {
-  minBid = topBid > 0 ? Math.floor(topBid) + 1 : MIN_BID;
-  bidInput.min = String(minBid);
-  if (!userAdjustedBid || getBidAmount() < minBid) {
-    setBidAmount(minBid);
+// The "Claim #1 for $X" headline suggests what it'd take to top the board,
+// but that's only a starting suggestion — any bid from $1 up is valid and
+// simply lands wherever that amount ranks (outbid.lol's actual mechanic).
+function updateSuggestedBid(topBid) {
+  suggestedBid = topBid > 0 ? Math.floor(topBid) + 1 : MIN_BID;
+  if (!userAdjustedBid) {
+    setBidAmount(suggestedBid); // also updates the claim-rank label
+  } else {
+    updateClaimRank(); // the amount didn't change, but the field of competitors just did
   }
 }
+
+// Event delegation: rows are replaced wholesale on every refresh, so a single
+// listener on the (stable) container beats re-attaching one per row.
+leaderboardEl.addEventListener('click', (e) => {
+  const card = e.target.closest('.rank-card');
+  if (!card) return;
+  const listingId = card.dataset.listingId;
+  if (!listingId) return;
+  incrementClickCount(dataConnect, { listingId }).catch((err) => console.error(err));
+});
 
 function renderActivity(bids) {
   if (!bids.length) {
@@ -171,19 +216,9 @@ outbidForm.addEventListener('submit', async (e) => {
 
   setOutbidMsg('');
   outbidSubmitBtn.disabled = true;
-  outbidSubmitBtn.textContent = 'Checking...';
+  outbidSubmitBtn.textContent = 'Redirecting to payment...';
 
   try {
-    const { data } = await getListingByUrl(dataConnect, { url }, SERVER_ONLY);
-    const existing = data.listings[0];
-
-    if (existing && amount <= existing.currentBid) {
-      setOutbidMsg(`You're already on the list at ${formatMoney(existing.currentBid)}. Bid higher to climb.`, 'err');
-      return;
-    }
-
-    outbidSubmitBtn.textContent = 'Redirecting to payment...';
-
     const res = await fetch(CHECKOUT_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -212,12 +247,19 @@ async function refreshLeaderboard() {
 }
 
 async function refreshActivity() {
-  const { data } = await listRecentBids(dataConnect, { limit: 15 }, SERVER_ONLY);
+  const { data } = await listRecentBids(dataConnect, { limit: 5 }, SERVER_ONLY);
   renderActivity(data.bids);
 }
 
 async function refreshAll() {
   await Promise.all([refreshLeaderboard(), refreshActivity()]);
+}
+
+async function refreshVisitorStats() {
+  const { data } = await getVisitorStats(dataConnect, SERVER_ONLY);
+  const stats = data.visitStats[0];
+  visitors1hEl.textContent = (stats?.lastHour ?? 0).toLocaleString('en-US');
+  visitors24hEl.textContent = (stats?.last24h ?? 0).toLocaleString('en-US');
 }
 
 function handlePaymentRedirect() {
@@ -240,6 +282,9 @@ refreshAll().catch((err) => {
   leaderboardEl.innerHTML = `<div class="empty-state">Couldn't load the leaderboard. Refresh to try again.</div>`;
 });
 
+logVisit(dataConnect).catch((err) => console.error(err));
+refreshVisitorStats().catch((err) => console.error(err));
+
 setInterval(() => {
   if (
     document.activeElement === bidInput ||
@@ -251,3 +296,7 @@ setInterval(() => {
   }
   refreshAll().catch((err) => console.error(err));
 }, POLL_INTERVAL_MS);
+
+setInterval(() => {
+  refreshVisitorStats().catch((err) => console.error(err));
+}, STATS_INTERVAL_MS);

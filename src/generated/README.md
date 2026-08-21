@@ -13,7 +13,10 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListRecentBids*](#listrecentbids)
   - [*GetListingById*](#getlistingbyid)
   - [*GetListingByUrl*](#getlistingbyurl)
+  - [*GetVisitorStats*](#getvisitorstats)
 - [**Mutations**](#mutations)
+  - [*LogVisit*](#logvisit)
+  - [*IncrementClickCount*](#incrementclickcount)
   - [*CreateListing*](#createlisting)
   - [*PlaceBid*](#placebid)
 
@@ -110,6 +113,7 @@ export interface ListLeaderboardData {
     displayName: string;
     url: string;
     tagline?: string | null;
+    iconUrl?: string | null;
     currentBid: number;
     clickCount: number;
     updatedAt: TimestampString;
@@ -633,6 +637,100 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## GetVisitorStats
+You can execute the `GetVisitorStats` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
+```typescript
+getVisitorStats(options?: ExecuteQueryOptions): QueryPromise<GetVisitorStatsData, undefined>;
+
+interface GetVisitorStatsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetVisitorStatsData, undefined>;
+}
+export const getVisitorStatsRef: GetVisitorStatsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getVisitorStats(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetVisitorStatsData, undefined>;
+
+interface GetVisitorStatsRef {
+  ...
+  (dc: DataConnect): QueryRef<GetVisitorStatsData, undefined>;
+}
+export const getVisitorStatsRef: GetVisitorStatsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getVisitorStatsRef:
+```typescript
+const name = getVisitorStatsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetVisitorStats` query has no variables.
+### Return Type
+Recall that executing the `GetVisitorStats` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetVisitorStatsData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetVisitorStatsData {
+  visitStats: ({
+    lastHour?: number | null;
+    last24h?: number | null;
+  })[];
+}
+```
+### Using `GetVisitorStats`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getVisitorStats } from '@appbid/dataconnect';
+
+
+// Call the `getVisitorStats()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getVisitorStats();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getVisitorStats(dataConnect);
+
+console.log(data.visitStats);
+
+// Or, you can use the `Promise` API.
+getVisitorStats().then((response) => {
+  const data = response.data;
+  console.log(data.visitStats);
+});
+```
+
+### Using `GetVisitorStats`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getVisitorStatsRef } from '@appbid/dataconnect';
+
+
+// Call the `getVisitorStatsRef()` function to get a reference to the query.
+const ref = getVisitorStatsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getVisitorStatsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.visitStats);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.visitStats);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -647,6 +745,206 @@ The following is true for both the action shortcut function and the `MutationRef
 - Both functions can be called with or without passing in a `DataConnect` instance as an argument. If no `DataConnect` argument is passed in, then the generated SDK will call `getDataConnect(connectorConfig)` behind the scenes for you.
 
 Below are examples of how to use the `appbid` connector's generated functions to execute each mutation. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-mutations).
+
+## LogVisit
+You can execute the `LogVisit` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
+```typescript
+logVisit(): MutationPromise<LogVisitData, undefined>;
+
+interface LogVisitRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): MutationRef<LogVisitData, undefined>;
+}
+export const logVisitRef: LogVisitRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+logVisit(dc: DataConnect): MutationPromise<LogVisitData, undefined>;
+
+interface LogVisitRef {
+  ...
+  (dc: DataConnect): MutationRef<LogVisitData, undefined>;
+}
+export const logVisitRef: LogVisitRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the logVisitRef:
+```typescript
+const name = logVisitRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `LogVisit` mutation has no variables.
+### Return Type
+Recall that executing the `LogVisit` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `LogVisitData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface LogVisitData {
+  visit_insert: Visit_Key;
+}
+```
+### Using `LogVisit`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, logVisit } from '@appbid/dataconnect';
+
+
+// Call the `logVisit()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await logVisit();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await logVisit(dataConnect);
+
+console.log(data.visit_insert);
+
+// Or, you can use the `Promise` API.
+logVisit().then((response) => {
+  const data = response.data;
+  console.log(data.visit_insert);
+});
+```
+
+### Using `LogVisit`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, logVisitRef } from '@appbid/dataconnect';
+
+
+// Call the `logVisitRef()` function to get a reference to the mutation.
+const ref = logVisitRef();
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = logVisitRef(dataConnect);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.visit_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.visit_insert);
+});
+```
+
+## IncrementClickCount
+You can execute the `IncrementClickCount` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
+```typescript
+incrementClickCount(vars: IncrementClickCountVariables): MutationPromise<IncrementClickCountData, IncrementClickCountVariables>;
+
+interface IncrementClickCountRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: IncrementClickCountVariables): MutationRef<IncrementClickCountData, IncrementClickCountVariables>;
+}
+export const incrementClickCountRef: IncrementClickCountRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+incrementClickCount(dc: DataConnect, vars: IncrementClickCountVariables): MutationPromise<IncrementClickCountData, IncrementClickCountVariables>;
+
+interface IncrementClickCountRef {
+  ...
+  (dc: DataConnect, vars: IncrementClickCountVariables): MutationRef<IncrementClickCountData, IncrementClickCountVariables>;
+}
+export const incrementClickCountRef: IncrementClickCountRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the incrementClickCountRef:
+```typescript
+const name = incrementClickCountRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `IncrementClickCount` mutation requires an argument of type `IncrementClickCountVariables`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface IncrementClickCountVariables {
+  listingId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `IncrementClickCount` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `IncrementClickCountData`, which is defined in [generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface IncrementClickCountData {
+  listing_update?: Listing_Key | null;
+}
+```
+### Using `IncrementClickCount`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, incrementClickCount, IncrementClickCountVariables } from '@appbid/dataconnect';
+
+// The `IncrementClickCount` mutation requires an argument of type `IncrementClickCountVariables`:
+const incrementClickCountVars: IncrementClickCountVariables = {
+  listingId: ..., 
+};
+
+// Call the `incrementClickCount()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await incrementClickCount(incrementClickCountVars);
+// Variables can be defined inline as well.
+const { data } = await incrementClickCount({ listingId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await incrementClickCount(dataConnect, incrementClickCountVars);
+
+console.log(data.listing_update);
+
+// Or, you can use the `Promise` API.
+incrementClickCount(incrementClickCountVars).then((response) => {
+  const data = response.data;
+  console.log(data.listing_update);
+});
+```
+
+### Using `IncrementClickCount`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, incrementClickCountRef, IncrementClickCountVariables } from '@appbid/dataconnect';
+
+// The `IncrementClickCount` mutation requires an argument of type `IncrementClickCountVariables`:
+const incrementClickCountVars: IncrementClickCountVariables = {
+  listingId: ..., 
+};
+
+// Call the `incrementClickCountRef()` function to get a reference to the mutation.
+const ref = incrementClickCountRef(incrementClickCountVars);
+// Variables can be defined inline as well.
+const ref = incrementClickCountRef({ listingId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = incrementClickCountRef(dataConnect, incrementClickCountVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.listing_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.listing_update);
+});
+```
 
 ## CreateListing
 You can execute the `CreateListing` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [generated/index.d.ts](./index.d.ts):
@@ -685,6 +983,7 @@ export interface CreateListingVariables {
   displayName: string;
   url: string;
   tagline?: string | null;
+  iconUrl?: string | null;
   ownerEmail?: string | null;
   initialBid: number;
   stripeSessionId?: string | null;
@@ -711,6 +1010,7 @@ const createListingVars: CreateListingVariables = {
   displayName: ..., 
   url: ..., 
   tagline: ..., // optional
+  iconUrl: ..., // optional
   ownerEmail: ..., // optional
   initialBid: ..., 
   stripeSessionId: ..., // optional
@@ -720,7 +1020,7 @@ const createListingVars: CreateListingVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createListing(createListingVars);
 // Variables can be defined inline as well.
-const { data } = await createListing({ displayName: ..., url: ..., tagline: ..., ownerEmail: ..., initialBid: ..., stripeSessionId: ..., });
+const { data } = await createListing({ displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., initialBid: ..., stripeSessionId: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -748,6 +1048,7 @@ const createListingVars: CreateListingVariables = {
   displayName: ..., 
   url: ..., 
   tagline: ..., // optional
+  iconUrl: ..., // optional
   ownerEmail: ..., // optional
   initialBid: ..., 
   stripeSessionId: ..., // optional
@@ -756,7 +1057,7 @@ const createListingVars: CreateListingVariables = {
 // Call the `createListingRef()` function to get a reference to the mutation.
 const ref = createListingRef(createListingVars);
 // Variables can be defined inline as well.
-const ref = createListingRef({ displayName: ..., url: ..., tagline: ..., ownerEmail: ..., initialBid: ..., stripeSessionId: ..., });
+const ref = createListingRef({ displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., initialBid: ..., stripeSessionId: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -817,6 +1118,7 @@ export interface PlaceBidVariables {
   displayName: string;
   url: string;
   tagline?: string | null;
+  iconUrl?: string | null;
   ownerEmail?: string | null;
   stripeSessionId?: string | null;
 }
@@ -845,6 +1147,7 @@ const placeBidVars: PlaceBidVariables = {
   displayName: ..., 
   url: ..., 
   tagline: ..., // optional
+  iconUrl: ..., // optional
   ownerEmail: ..., // optional
   stripeSessionId: ..., // optional
 };
@@ -853,7 +1156,7 @@ const placeBidVars: PlaceBidVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await placeBid(placeBidVars);
 // Variables can be defined inline as well.
-const { data } = await placeBid({ listingId: ..., amount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., ownerEmail: ..., stripeSessionId: ..., });
+const { data } = await placeBid({ listingId: ..., amount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., stripeSessionId: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -884,6 +1187,7 @@ const placeBidVars: PlaceBidVariables = {
   displayName: ..., 
   url: ..., 
   tagline: ..., // optional
+  iconUrl: ..., // optional
   ownerEmail: ..., // optional
   stripeSessionId: ..., // optional
 };
@@ -891,7 +1195,7 @@ const placeBidVars: PlaceBidVariables = {
 // Call the `placeBidRef()` function to get a reference to the mutation.
 const ref = placeBidRef(placeBidVars);
 // Variables can be defined inline as well.
-const ref = placeBidRef({ listingId: ..., amount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., ownerEmail: ..., stripeSessionId: ..., });
+const ref = placeBidRef({ listingId: ..., amount: ..., bidderName: ..., displayName: ..., url: ..., tagline: ..., iconUrl: ..., ownerEmail: ..., stripeSessionId: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

@@ -18,6 +18,15 @@ extend type Mutation {
     data: Listing_Data!
   ): Listing_KeyOutput! @fdc_generated(from: "Listing", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `Visit` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  visit_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Visit_Data!
+  ): Visit_KeyOutput! @fdc_generated(from: "Visit", purpose: INSERT_SINGLE)
+  """
   ✨ Insert `Bid` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   bid_insertMany(
@@ -35,6 +44,15 @@ extend type Mutation {
     """
     data: [Listing_Data!]!
   ): [Listing_KeyOutput!]! @fdc_generated(from: "Listing", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Visit` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  visit_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Visit_Data!]!
+  ): [Visit_KeyOutput!]! @fdc_generated(from: "Visit", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert or update a single `Bid` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Bid`.
   """
@@ -54,6 +72,15 @@ extend type Mutation {
     data: Listing_Data!
   ): Listing_KeyOutput! @fdc_generated(from: "Listing", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `Visit` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Visit`.
+  """
+  visit_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Visit_Data!
+  ): Visit_KeyOutput! @fdc_generated(from: "Visit", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update `Bid` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Bid`.
   """
   bid_upsertMany(
@@ -71,6 +98,15 @@ extend type Mutation {
     """
     data: [Listing_Data!]!
   ): [Listing_KeyOutput!]! @fdc_generated(from: "Listing", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Visit` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Visit`.
+  """
+  visit_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Visit_Data!]!
+  ): [Visit_KeyOutput!]! @fdc_generated(from: "Visit", purpose: UPSERT_MULTIPLE)
   """
   ✨ Update a single `Bid` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Bid` or `null` if not found.
   """
@@ -120,6 +156,30 @@ extend type Mutation {
     data: Listing_Data!
   ): Listing_KeyOutput @fdc_generated(from: "Listing", purpose: UPDATE_SINGLE)
   """
+  ✨ Update a single `Visit` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Visit` or `null` if not found.
+  """
+  visit_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Visit_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Visit_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Visit_Data!
+  ): Visit_KeyOutput @fdc_generated(from: "Visit", purpose: UPDATE_SINGLE)
+  """
   ✨ Update `Bid` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   bid_updateMany(
@@ -157,6 +217,25 @@ extend type Mutation {
     """
     data: Listing_Data!
   ): Int! @fdc_generated(from: "Listing", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Visit` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  visit_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Visit_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Visit_Data!
+  ): Int! @fdc_generated(from: "Visit", purpose: UPDATE_MULTIPLE)
   """
   ✨ Delete a single `Bid` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -196,6 +275,25 @@ extend type Mutation {
     first: Listing_FirstRow
   ): Listing_KeyOutput @fdc_generated(from: "Listing", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `Visit` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  visit_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Visit_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Visit_FirstRow
+  ): Visit_KeyOutput @fdc_generated(from: "Visit", purpose: DELETE_SINGLE)
+  """
   ✨ Delete `Bid` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
   bid_deleteMany(
@@ -223,4 +321,18 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Listing", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Visit` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  visit_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Visit_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Visit", purpose: DELETE_MULTIPLE)
 }

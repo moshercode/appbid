@@ -12,6 +12,7 @@ type Listing @table {
   displayName: String!                        # Nombre a mostrar en el ranking, elegido por el usuario
   url: String! @unique                        # Enlace de navegación (web o ficha de tienda de apps) — identifica al listing para re-pujas
   tagline: String                             # Descripción corta mostrada en el ranking (opcional)
+  iconUrl: String                             # Favicon/og:image/icono de tienda, capturado tras el pago (opcional — si falla, se muestra el nº de rank)
   ownerEmail: String                          # Contacto del dueño del listing (opcional, sin uso en la UI aún)
   currentBid: Float! @default(value: 1.0)     # Puja actual — determina el rank
   clickCount: Int! @default(value: 0)         # Nº de clics recibidos desde el ranking
@@ -31,4 +32,25 @@ type Bid @table {
   url: String!                                 # Copia de la url del listing en el momento de la puja
   stripeSessionId: String @unique              # Idempotencia: evita duplicar la puja si Stripe reintenta el webhook
   createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# ── Visit ─────────────────────────────────────────────────────────────────────
+# Un registro por carga de página, para el contador de visitantes. Sin dedupe
+# por usuario/IP — es un contador de visitas, no de usuarios únicos. Una Cloud
+# Function programada limpia las filas de más de 48h para que la tabla no crezca sin límite.
+
+type Visit @table {
+  id: UUID! @default(expr: "uuidV4()")
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# Vista de agregación: cuenta visitas en la última hora y en las últimas 24h.
+# Al ser un único row calculado con NOW(), no necesita variables de tiempo desde GraphQL.
+type VisitStat @view(sql: """
+  SELECT
+    (SELECT COUNT(*) FROM "visit" WHERE created_at > NOW() - INTERVAL '1 hour') AS last_hour,
+    (SELECT COUNT(*) FROM "visit" WHERE created_at > NOW() - INTERVAL '24 hours') AS last24h
+""") {
+  lastHour: Int
+  last24h: Int
 }

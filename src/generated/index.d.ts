@@ -24,6 +24,7 @@ export interface CreateListingVariables {
   displayName: string;
   url: string;
   tagline?: string | null;
+  iconUrl?: string | null;
   ownerEmail?: string | null;
   initialBid: number;
   stripeSessionId?: string | null;
@@ -70,12 +71,28 @@ export interface GetTopListingData {
   } & Listing_Key)[];
 }
 
+export interface GetVisitorStatsData {
+  visitStats: ({
+    lastHour?: number | null;
+    last24h?: number | null;
+  })[];
+}
+
+export interface IncrementClickCountData {
+  listing_update?: Listing_Key | null;
+}
+
+export interface IncrementClickCountVariables {
+  listingId: UUIDString;
+}
+
 export interface ListLeaderboardData {
   listings: ({
     id: UUIDString;
     displayName: string;
     url: string;
     tagline?: string | null;
+    iconUrl?: string | null;
     currentBid: number;
     clickCount: number;
     updatedAt: TimestampString;
@@ -106,6 +123,10 @@ export interface Listing_Key {
   __typename?: 'Listing_Key';
 }
 
+export interface LogVisitData {
+  visit_insert: Visit_Key;
+}
+
 export interface PlaceBidData {
   bid_insert: Bid_Key;
   listing_update?: Listing_Key | null;
@@ -118,9 +139,39 @@ export interface PlaceBidVariables {
   displayName: string;
   url: string;
   tagline?: string | null;
+  iconUrl?: string | null;
   ownerEmail?: string | null;
   stripeSessionId?: string | null;
 }
+
+export interface Visit_Key {
+  id: UUIDString;
+  __typename?: 'Visit_Key';
+}
+
+interface LogVisitRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): MutationRef<LogVisitData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): MutationRef<LogVisitData, undefined>;
+  operationName: string;
+}
+export const logVisitRef: LogVisitRef;
+
+export function logVisit(): MutationPromise<LogVisitData, undefined>;
+export function logVisit(dc: DataConnect): MutationPromise<LogVisitData, undefined>;
+
+interface IncrementClickCountRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: IncrementClickCountVariables): MutationRef<IncrementClickCountData, IncrementClickCountVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: IncrementClickCountVariables): MutationRef<IncrementClickCountData, IncrementClickCountVariables>;
+  operationName: string;
+}
+export const incrementClickCountRef: IncrementClickCountRef;
+
+export function incrementClickCount(vars: IncrementClickCountVariables): MutationPromise<IncrementClickCountData, IncrementClickCountVariables>;
+export function incrementClickCount(dc: DataConnect, vars: IncrementClickCountVariables): MutationPromise<IncrementClickCountData, IncrementClickCountVariables>;
 
 interface CreateListingRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -205,4 +256,16 @@ export const getListingByUrlRef: GetListingByUrlRef;
 
 export function getListingByUrl(vars: GetListingByUrlVariables, options?: ExecuteQueryOptions): QueryPromise<GetListingByUrlData, GetListingByUrlVariables>;
 export function getListingByUrl(dc: DataConnect, vars: GetListingByUrlVariables, options?: ExecuteQueryOptions): QueryPromise<GetListingByUrlData, GetListingByUrlVariables>;
+
+interface GetVisitorStatsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetVisitorStatsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetVisitorStatsData, undefined>;
+  operationName: string;
+}
+export const getVisitorStatsRef: GetVisitorStatsRef;
+
+export function getVisitorStats(options?: ExecuteQueryOptions): QueryPromise<GetVisitorStatsData, undefined>;
+export function getVisitorStats(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetVisitorStatsData, undefined>;
 
