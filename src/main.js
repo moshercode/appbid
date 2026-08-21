@@ -8,6 +8,7 @@ const CHECKOUT_ENDPOINT = '/api/create-checkout-session';
 
 const leaderboardEl = document.getElementById('leaderboard-body');
 const activityEl = document.getElementById('activity-feed');
+const themeToggleBtn = document.getElementById('theme-toggle');
 
 const bidInput = document.getElementById('bid-amount-input');
 const bidMinusBtn = document.getElementById('bid-minus');
@@ -21,6 +22,26 @@ const outbidMsg = document.getElementById('outbid-msg');
 
 let minBid = MIN_BID;
 let userAdjustedBid = false;
+
+function applyThemeIcon() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  themeToggleBtn.textContent = isLight ? '🌙' : '☀️';
+  themeToggleBtn.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+}
+
+themeToggleBtn.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }
+  applyThemeIcon();
+});
+
+applyThemeIcon();
 
 function escapeHtml(str) {
   return String(str ?? '').replace(/[&<>"']/g, (c) => ({
