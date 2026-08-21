@@ -1,0 +1,6 @@
+extend type Bid {
+  """
+  ✨ Implicit foreign key field based on `Bid`.`listing`. It must match the value of `Listing`.`id`. See `@ref` for how to customize it.
+  """
+  listingId: UUID! @fdc_generated(from: "Bid.listing", purpose: IMPLICIT_REF_FIELD)
+}

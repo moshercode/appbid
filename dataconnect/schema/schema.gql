@@ -1,0 +1,34 @@
+# ── appbid.lol — Firebase Data Connect Schema ────────────────────────────────
+# Clon funcional de outbid.lol: ranking de "listings" (sitios/dominios) que
+# compiten por puestos pujando cantidades crecientes. Las mutaciones de escritura
+# están bloqueadas para el cliente (@auth NO_ACCESS) — solo las llama el backend
+# (Cloud Functions) tras confirmar el pago con Stripe, vía Admin SDK.
+
+# ── Listing ───────────────────────────────────────────────────────────────────
+# Un puesto en el ranking. currentBid determina la posición (orden descendente).
+
+type Listing @table {
+  id: UUID! @default(expr: "uuidV4()")
+  displayName: String!                        # Nombre a mostrar en el ranking, elegido por el usuario
+  url: String! @unique                        # Enlace de navegación (web o ficha de tienda de apps) — identifica al listing para re-pujas
+  tagline: String                             # Descripción corta mostrada en el ranking (opcional)
+  ownerEmail: String                          # Contacto del dueño del listing (opcional, sin uso en la UI aún)
+  currentBid: Float! @default(value: 1.0)     # Puja actual — determina el rank
+  clickCount: Int! @default(value: 0)         # Nº de clics recibidos desde el ranking
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+# ── Bid ───────────────────────────────────────────────────────────────────────
+# Historial de pujas, usado para el feed de actividad reciente.
+
+type Bid @table {
+  id: UUID! @default(expr: "uuidV4()")
+  listing: Listing!
+  amount: Float!
+  bidderName: String                          # Nombre mostrado en el feed (opcional)
+  displayName: String!                         # Copia del displayName del listing en el momento de la puja
+  url: String!                                 # Copia de la url del listing en el momento de la puja
+  stripeSessionId: String @unique              # Idempotencia: evita duplicar la puja si Stripe reintenta el webhook
+  createdAt: Timestamp! @default(expr: "request.time")
+}

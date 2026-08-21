@@ -1,0 +1,64 @@
+# ── Mutations — appbid connector ─────────────────────────────────────────────
+# Bloqueadas para el cliente: solo las llama el backend (Cloud Functions) tras
+# confirmar el pago con Stripe, vía Admin SDK (que ignora @auth).
+
+mutation CreateListing(
+  $displayName: String!
+  $url: String!
+  $tagline: String
+  $ownerEmail: String
+  $initialBid: Float!
+  $stripeSessionId: String
+) @auth(level: NO_ACCESS) {
+  newListing: listing_insert(
+    data: {
+      displayName: $displayName
+      url: $url
+      tagline: $tagline
+      ownerEmail: $ownerEmail
+      currentBid: $initialBid
+    }
+  )
+  bid_insert(
+    data: {
+      listingId_expr: "response.newListing.id"
+      amount: $initialBid
+      displayName: $displayName
+      url: $url
+      stripeSessionId: $stripeSessionId
+    }
+  )
+}
+
+mutation PlaceBid(
+  $listingId: UUID!
+  $amount: Float!
+  $bidderName: String
+  $displayName: String!
+  $url: String!
+  $tagline: String
+  $ownerEmail: String
+  $stripeSessionId: String
+) @auth(level: NO_ACCESS) {
+  bid_insert(
+    data: {
+      listingId: $listingId
+      amount: $amount
+      bidderName: $bidderName
+      displayName: $displayName
+      url: $url
+      stripeSessionId: $stripeSessionId
+    }
+  )
+  listing_update(
+    id: $listingId
+    data: {
+      currentBid: $amount
+      displayName: $displayName
+      url: $url
+      tagline: $tagline
+      ownerEmail: $ownerEmail
+      updatedAt_expr: "request.time"
+    }
+  )
+}

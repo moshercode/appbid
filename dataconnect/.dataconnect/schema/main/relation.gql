@@ -1,0 +1,317 @@
+extend type Bid {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Bid", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Bid` table.
+  """
+  _count: Int! @fdc_generated(from: "Bid.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `amount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  amount_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.amount", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `bidderName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  bidderName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.bidderName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `displayName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  displayName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.displayName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `listingId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  listingId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.listingId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `stripeSessionId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  stripeSessionId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.stripeSessionId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Bid` table where the `url` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  url_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Bid.url", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `amount` field in the `Bid` table.
+  """
+  amount_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Bid.amount", purpose: QUERY_SUM)
+  """
+  ✨ Average the `amount` field in the `Bid` table.
+  """
+  amount_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Bid.amount", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `amount` field in the `Bid` table.
+  """
+  amount_min: Float @fdc_generated(from: "Bid.amount", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `createdAt` field in the `Bid` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "Bid.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `amount` field in the `Bid` table.
+  """
+  amount_max: Float @fdc_generated(from: "Bid.amount", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `createdAt` field in the `Bid` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "Bid.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Bid.id", purpose: ENTITY_ID)
+}
+extend type Listing {
+  """
+  ✨ List `Bid` objects in a one-to-many relationship (where `Bid`.`listing` is this object).
+  """
+  bids_on_listing(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Bid_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Bid_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Bid_Having
+  ): [Bid!]! @fdc_generated(from: "Bid.listing", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Listing", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Listing` table.
+  """
+  _count: Int! @fdc_generated(from: "Listing.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `clickCount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  clickCount_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.clickCount", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `currentBid` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  currentBid_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.currentBid", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `displayName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  displayName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.displayName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `ownerEmail` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  ownerEmail_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.ownerEmail", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `tagline` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  tagline_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.tagline", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `updatedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  updatedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.updatedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Listing` table where the `url` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  url_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Listing.url", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `clickCount` field in the `Listing` table.
+  """
+  clickCount_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Listing.clickCount", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `currentBid` field in the `Listing` table.
+  """
+  currentBid_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Listing.currentBid", purpose: QUERY_SUM)
+  """
+  ✨ Average the `clickCount` field in the `Listing` table.
+  """
+  clickCount_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Listing.clickCount", purpose: QUERY_AVG)
+  """
+  ✨ Average the `currentBid` field in the `Listing` table.
+  """
+  currentBid_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Listing.currentBid", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `clickCount` field in the `Listing` table.
+  """
+  clickCount_min: Int @fdc_generated(from: "Listing.clickCount", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `createdAt` field in the `Listing` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "Listing.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `currentBid` field in the `Listing` table.
+  """
+  currentBid_min: Float @fdc_generated(from: "Listing.currentBid", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `updatedAt` field in the `Listing` table.
+  """
+  updatedAt_min: Timestamp @fdc_generated(from: "Listing.updatedAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `clickCount` field in the `Listing` table.
+  """
+  clickCount_max: Int @fdc_generated(from: "Listing.clickCount", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `createdAt` field in the `Listing` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "Listing.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `currentBid` field in the `Listing` table.
+  """
+  currentBid_max: Float @fdc_generated(from: "Listing.currentBid", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `updatedAt` field in the `Listing` table.
+  """
+  updatedAt_max: Timestamp @fdc_generated(from: "Listing.updatedAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Listing.id", purpose: ENTITY_ID)
+}

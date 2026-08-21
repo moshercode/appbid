@@ -1,0 +1,8 @@
+connectorId: "appbid"
+generate:
+  javascriptSdk:
+    outputDir: "../../src/generated"
+    package: "@appbid/dataconnect"
+  adminNodeSdk:
+    outputDir: "../../functions/dataconnect-generated"
+    package: "@appbid/dataconnect-admin"

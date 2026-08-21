@@ -1,0 +1,62 @@
+# ── Queries — appbid connector ───────────────────────────────────────────────
+
+query ListLeaderboard($limit: Int = 50)
+  @auth(level: PUBLIC, insecureReason: "Public leaderboard, no auth in this MVP") {
+  listings(orderBy: { currentBid: DESC }, limit: $limit) {
+    id
+    displayName
+    url
+    tagline
+    currentBid
+    clickCount
+    updatedAt
+  }
+}
+
+query GetTopListing
+  @auth(level: PUBLIC, insecureReason: "Public leaderboard, no auth in this MVP") {
+  listings(orderBy: { currentBid: DESC }, limit: 1) {
+    id
+    displayName
+    url
+    currentBid
+  }
+}
+
+query ListRecentBids($limit: Int = 20)
+  @auth(level: PUBLIC, insecureReason: "Public activity feed, no auth in this MVP") {
+  bids(orderBy: { createdAt: DESC }, limit: $limit) {
+    id
+    amount
+    bidderName
+    displayName
+    url
+    createdAt
+  }
+}
+
+query GetListingById($id: UUID!)
+  @auth(level: PUBLIC, insecureReason: "Public listing detail, no auth in this MVP") {
+  listing(id: $id) {
+    id
+    displayName
+    url
+    tagline
+    ownerEmail
+    currentBid
+    clickCount
+    createdAt
+    updatedAt
+  }
+}
+
+query GetListingByUrl($url: String!)
+  @auth(level: PUBLIC, insecureReason: "Public listing lookup, no auth in this MVP") {
+  listings(where: { url: { eq: $url } }, limit: 1) {
+    id
+    displayName
+    url
+    tagline
+    currentBid
+  }
+}

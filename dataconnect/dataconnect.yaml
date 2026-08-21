@@ -1,0 +1,11 @@
+specVersion: "v1"
+serviceId: "appbid-service-id"
+location: "us-east4"
+schemas:
+  - source: "./schema"
+    datasource:
+      postgresql:
+        database: "appbid-database"
+        cloudSql:
+          instanceId: "appbid-instance-id"
+connectorDirs: ["./connector"]
