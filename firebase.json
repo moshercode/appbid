@@ -1,26 +1,11 @@
 {
-  "dataconnect": {
-    "source": "dataconnect"
-  },
-  "functions": {
-    "source": "functions"
-  },
   "hosting": {
-    "public": "dist",
+    "public": "public",
     "ignore": [
       "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+      "**/.*"
     ],
     "rewrites": [
-      {
-        "source": "/api/create-checkout-session",
-        "function": "createCheckoutSession"
-      },
-      {
-        "source": "/api/stripe-webhook",
-        "function": "stripeWebhook"
-      },
       {
         "source": "**",
         "destination": "/index.html"
